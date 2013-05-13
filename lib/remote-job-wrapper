@@ -90,24 +90,24 @@ function stage_out()
 
     # event output
     #globus-url-copy -v -create-dest -notpt -nodcau \
-    #                file://$WORK_DIR/event.outerr \
-    #                $BASE_URL/runs/$RUN_ID/logs/$JOB_ID.event.outerr \
+    #                file://$WORK_DIR/log \
+    #                $BASE_URL/runs/$RUN_ID/logs/$JOB_ID.log \
     #                || return 1
 
     globus-url-copy -v -create-dest -notpt -nodcau \
-                    file://$WORK_DIR/event.outerr \
-                    $DEST_URL/$RUN_ID/$JOB_ID.event.outerr \
+                    file://$WORK_DIR/eventslog.gz \
+                    $DEST_URL/$RUN_ID/$JOB_ID.log.gz \
                     || return 1
 
     # urqmd results
-    #for F in $WORK_DIR/urqmd/*.result.f13.gz; do
+    #for F in $WORK_DIR/urqmd/*.f13.gz; do
     #  globus-url-copy -v -create-dest -notpt -nodcau \
     #                  file://$F \
     #                  $BASE_URL/runs/$RUN_ID/outputs/$JOB_ID.`basename $F` \
     #                  || return 1
     #done
 
-    for F in $WORK_DIR/urqmd/*.result.f13.gz; do
+    for F in $WORK_DIR/urqmd/*.f13.gz; do
       globus-url-copy -v -create-dest -notpt -nodcau \
                       file://$F \
                       $DEST_URL/$RUN_ID/$JOB_ID.`basename $F` \
@@ -128,19 +128,22 @@ function run_model()
     . msg
 
     # identifier in the output file
-    msg 'event-by-event OSG remote-job-wrapper' > event.outerr
-    msg2 "run_id:  $RUN_ID" >> event.outerr
-    msg2 "job_id:  $JOB_ID" >> event.outerr
-    echo >> event.outerr
+    msg 'event-by-event OSG remote-job-wrapper' > eventslog
+    msg2 "run_id:  $RUN_ID" >> eventslog
+    msg2 "job_id:  $JOB_ID" >> eventslog
+    echo >> eventslog
 
     # do it
-    ./run-event `for F in ${INPUT_FILES[@]}; do basename $F; done` >> event.outerr 2>&1
+    ./run-event `for F in ${INPUT_FILES[@]}; do basename $F; done` >> eventslog 2>&1
     EXIT_CODE=$?
     
     # if failure, put the last lines on stdout - useful for debugging
     if [ "x$EXIT_CODE" != "x0" ]; then
-        tail -n 500 event.outerr
+        tail -n 500 eventslog
     fi
+
+    gzip -v eventslog
+
     return $EXIT_CODE
 }
 

@@ -141,7 +141,7 @@ for (( i=0; i<$nev; i++ )); do
   cd urqmd
   export ftn09=uqmd.burner
   export ftn10=initial.f14ex
-  export ftn13=$i.result.f13
+  export ftn13=$i.f13
   time ./urqmd.Linux || { 
     warning "UrQMD failed for event ${i}, skipping to next event"
     continue
