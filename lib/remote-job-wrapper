@@ -134,7 +134,7 @@ function run_model()
     echo >> event.outerr
 
     # do it
-    ./run-event `for F in ${INPUT_FILES[@]}; do basename $F; done` &>> event.outerr
+    ./run-event `for F in ${INPUT_FILES[@]}; do basename $F; done` >> event.outerr 2>&1
     EXIT_CODE=$?
     
     # if failure, put the last lines on stdout - useful for debugging
