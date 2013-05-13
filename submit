@@ -1,0 +1,104 @@
+#!/bin/bash
+
+set -e
+
+#############################################################################
+#
+# settings
+#
+
+# max run time (hours)
+MAX_WALL_TIME=24
+
+# megabytes
+MEMORY_REQUIREMENT=1024
+
+#############################################################################
+
+
+# load output functions
+. lib/msg
+
+# init proxy if not enough time remains
+grid-proxy-info -exists -valid 2:00 || grid-proxy-init -valid 24:00 -pwstdin < $HOME/.grid
+
+
+# first argument is number of jobs to submit
+NUM_RUNS=$1
+
+# remaining arguments are input files
+shift 
+INPUT_FILES=$@
+
+for F in ${INPUT_FILES[@]}; do
+  INPUT_FILES_JOINED="${INPUT_FILES_JOINED}_`basename $F`"
+done
+
+msg "Generating $NUM_RUNS jobs for input file[s] ${INPUT_FILES[@]}"
+
+# top dir
+TOP_DIR=`pwd`
+
+# runid
+RUN_ID="`/bin/date +'%F_%H%M%S'`_${NUM_RUNS}jobs_${INPUT_FILES_JOINED:1}"
+msg "Run id is $RUN_ID"
+
+# run dir
+RUN_DIR=$TOP_DIR/runs/$RUN_ID
+mkdir -p $RUN_DIR/{condor,logs,dag}
+touch $RUN_DIR/alljobs.log
+chmod 644 $RUN_DIR/alljobs.log
+
+# gridftp base urls
+BASE_URL=gsiftp://`hostname -f`"$TOP_DIR"
+
+USER_ID=`id -u`
+
+for (( JOB_ID=0; JOB_ID<$NUM_RUNS; JOB_ID++ )); do
+    msg2 "Generating job $JOB_ID"
+    #mkdir -p $RUN_DIR/logs/$JOB_ID
+
+    # condor submit file
+    cd $RUN_DIR
+    cat > condor/$JOB_ID <<EOF
+universe        = vanilla
+
+# Specify voms proxy here
+x509userproxy   = /tmp/x509up_u$USER_ID
+
+# requirements is an expression to specify machines that can run jobs
+#requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && !regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
+#requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
+requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+
+# make sure the job is being retried and rematched
+periodic_release = (NumGlobusSubmits < 5) && ((CurrentTime - EnteredCurrentStatus) > (60*60))
+
+# protect against hung jobs
+periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME*3600))
+
+# stay in queue on failures
+on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
+
+executable = ../../lib/remote-job-wrapper
+arguments = $RUN_ID $JOB_ID $BASE_URL ${INPUT_FILES[@]}
+
+should_transfer_files = YES
+WhenToTransferOutput = ON_EXIT
+
+output = logs/$JOB_ID.condor.out
+error = logs/$JOB_ID.condor.err
+log = alljobs.log
+
+notification = NEVER
+
+queue
+EOF
+
+    # update dag
+    echo "" >> dag/master.dag
+    echo "JOB    job_$JOB_ID condor/$JOB_ID" >> dag/master
+    echo "RETRY  job_$JOB_ID 3" >> dag/master
+done
+
+condor_submit_dag -notification NEVER -maxidle 200 dag/master

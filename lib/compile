@@ -1,0 +1,16 @@
+#!/bin/bash
+
+. msg
+
+
+for i in superMC VISHNew iSS osc2u; do
+  msg "compiling $i"
+  ( cd $i && ./Zmake.sh || exit 1 )
+  echo
+done
+
+msg 'compiling urqmd'
+( cd urqmd && make clean && make || exit 1 )
+echo
+
+msg 'done'

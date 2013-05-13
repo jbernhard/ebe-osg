@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#
+# Fortran settings
+#
+
+# prefer Intel, fall back to GNU
+if which ifort &> /dev/null; then
+  FC=ifort
+  #FFLAGS="${FFLAGS} -fast -heap-arrays -axsse4.2,sse4.1"
+  FFLAGS="${FFLAGS} -O3 -ipo -no-prec-div -static -heap-arrays -axsse4.2,sse4.1 -msse2"
+else
+  FC=gfortran
+  FFLAGS="${FFLAGS} -static"
+fi
+
+FFLAGS="${FFLAGS} -cpp"
+
+echo $FC $FFLAGS

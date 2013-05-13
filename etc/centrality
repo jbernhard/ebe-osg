@@ -1,0 +1,20 @@
+Pb @ 2760 (10,000,000)
+cen:   0- 5%   N_min=357.0   N_max=416.0   N_avg=384.4   b_min=  0.0   b_max=  4.4   b_avg=  2.2
+cen:   5-10%   N_min=305.0   N_max=357.0   N_avg=330.3   b_min=  2.3   b_max=  5.7   b_avg=  4.1
+cen:  10-15%   N_min=261.0   N_max=305.0   N_avg=282.6   b_min=  3.8   b_max=  6.8   b_avg=  5.3
+cen:  15-20%   N_min=223.0   N_max=261.0   N_avg=241.4   b_min=  4.8   b_max=  7.7   b_avg=  6.2
+cen:  20-25%   N_min=189.0   N_max=223.0   N_avg=205.4   b_min=  5.6   b_max=  8.7   b_avg=  7.1
+cen:  25-30%   N_min=159.0   N_max=189.0   N_avg=173.9   b_min=  6.4   b_max=  9.4   b_avg=  7.8
+cen:  30-35%   N_min=133.0   N_max=159.0   N_avg=146.1   b_min=  7.2   b_max= 10.1   b_avg=  8.5
+cen:  35-40%   N_min=110.0   N_max=133.0   N_avg=121.7   b_min=  7.7   b_max= 10.7   b_avg=  9.1
+cen:  40-45%   N_min= 90.0   N_max=110.0   N_avg=100.2   b_min=  8.3   b_max= 11.4   b_avg=  9.7
+cen:  45-50%   N_min= 73.0   N_max= 90.0   N_avg= 81.4   b_min=  8.7   b_max= 12.1   b_avg= 10.3
+cen:  50-55%   N_min= 58.0   N_max= 73.0   N_avg= 65.0   b_min=  9.3   b_max= 12.9   b_avg= 10.8
+cen:  55-60%   N_min= 45.0   N_max= 58.0   N_avg= 50.9   b_min=  9.6   b_max= 13.4   b_avg= 11.3
+cen:  60-65%   N_min= 34.0   N_max= 45.0   N_avg= 39.0   b_min= 10.1   b_max= 14.1   b_avg= 11.8
+cen:  65-70%   N_min= 25.0   N_max= 34.0   N_avg= 29.0   b_min= 10.2   b_max= 14.7   b_avg= 12.3
+cen:  70-75%   N_min= 17.0   N_max= 25.0   N_avg= 20.9   b_min= 10.4   b_max= 15.2   b_avg= 12.7
+cen:  75-80%   N_min= 12.0   N_max= 17.0   N_avg= 14.4   b_min= 11.0   b_max= 16.1   b_avg= 13.2
+cen:  80-85%   N_min=  7.0   N_max= 12.0   N_avg=  9.5   b_min= 11.3   b_max= 16.4   b_avg= 13.6
+cen:  85-90%   N_min=  5.0   N_max=  7.0   N_avg=  5.9   b_min= 11.5   b_max= 17.2   b_avg= 14.1
+cen:  90-95%   N_min=  2.0   N_max=  5.0   N_avg=  3.4   b_min= 11.8   b_max= 18.5   b_avg= 14.5

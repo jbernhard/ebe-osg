@@ -1,0 +1,18 @@
+#!/bin/bash
+
+
+#
+# combine all necessary files into an archive [intended to be copied to compute nodes]
+#
+
+archive='event.tar.gz'
+
+test -f $archive  && rm -v $archive
+
+tar cvzf $archive \
+  superMC/{data,s95p-PCE,parameters.dat,superMC} \
+  VISHNew/{EOS,Initial,movie,results,VISHNew,Vishydro.inp,extraParas.inp} \
+  iSS/{EOS,parameters.dat,results,tables,iSS,OSCAR_header.txt} \
+  osc2u/osc2u \
+  urqmd/{uqmd.burner,urqmd.Linux} \
+  run-event msg

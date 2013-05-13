@@ -1,0 +1,176 @@
+#!/bin/bash
+
+
+# startup
+
+. msg
+
+msg 'starting event[s]...'
+
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# read parameters from input files
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+echo
+msg 'reading input files'
+
+# arrays to hold superMC and VISHNew settings
+smc=()
+vn=()
+
+# scan through input file[s]
+for file in $@; do
+  msg2 "$file"
+  while read line; do
+    set $line
+
+    # append settings to appropriate arrays
+    case $1 in
+      'superMC') 
+        smc=(${smc[@]} $2)
+        ;;
+      'VISHNew') 
+        vn=(${vn[@]} $2)
+        ;;
+      *)
+        warning "ignoring unknown setting:  $line"
+        ;;
+    esac
+  done < $file
+done
+
+
+echo
+msg 'detected settings'
+msg2 "superMC:  ${smc[*]}"
+msg2 "VISHNew:  ${vn[*]}"
+
+
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# event-by-event
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+echo
+msg 'generating initial condition[s]'
+
+cd superMC 
+
+time ./superMC ${smc[@]} || { 
+  error 'superMC failed, exiting'
+  exit 1 
+}
+
+nev=$(ls data/sd_event_*_block.dat | wc -l)
+nsuccess=0
+echo
+msg "$nev ICs generated"
+
+cd ..
+
+
+# do the remaining EbE routines for each generated IC
+for (( i=0; i<$nev; i++ )); do
+
+  echo
+  msg "starting event $i"
+
+
+  echo
+  msg 'moving IC for input to hydro'
+  mv -v superMC/data/sd_event_$[$i+1]_block.dat VISHNew/Initial/InitialSd.dat
+
+
+  echo
+  msg 'running hydro'
+  cd VISHNew 
+  time ./VISHNew ${vn[@]} || { 
+    warning "VISHnew failed for event ${i}, skipping to next event"
+    continue 
+  }
+  cd ..
+
+
+  echo
+  msg 'moving hypersurface files for input to sampler'
+  mv -v VISHNew/results/{decdat2.dat,decdat_mu.dat,surface.dat} iSS/results/
+
+
+  echo
+  msg 'running freeze-out hypersurface sampler'
+  cd iSS 
+  time ./iSS || { 
+    warning "iSS failed for event ${i}, skipping to next event"
+    continue 
+  }
+  cd ..
+
+
+  echo
+  msg 'moving OSCAR output for input to UrQMD converter'
+  mv -v iSS/OSCAR.DAT osc2u/
+
+
+  echo
+  msg 'running OSCAR to UrQMD converter'
+  cd osc2u 
+  time ./osc2u < OSCAR.DAT || { 
+    warning "osc2u failed for event ${i}, skipping to next event" 
+    continue 
+  }
+  cd ..
+
+
+  echo
+  msg 'moving osc2u fortran output for input to UrQMD'
+  mv -v osc2u/fort.14 urqmd/initial.f14ex
+
+
+
+  echo
+  msg 'running UrQMD'
+
+  cd urqmd
+  export ftn09=uqmd.burner
+  export ftn10=initial.f14ex
+  export ftn13=$i.result.f13
+  time ./urqmd.Linux || { 
+    warning "UrQMD failed for event ${i}, skipping to next event"
+    continue
+  }
+
+  echo
+  msg 'checking integrity'
+  nparticles=$(awk '/^ +[0-9]+ +[0-9]+$/ {print $1}' $ftn13)
+  nlines=$(wc -l $ftn13 | cut -d' ' -f1)
+  msg2 "event reports $nparticles particles"
+  msg2 "file has $nlines lines"
+  if [[ $nlines == $[$nparticles+16] ]]; then
+    msg2 'verified, compressing output'
+    gzip -v $ftn13
+    nsuccess=$[$nsuccess+1]
+  else
+    warning 'failed integrity check, skipping to next event'
+    continue
+  fi
+
+  cd ..
+
+
+  echo
+  msg 'cleaning up'
+  rm -v VISHNew/{Initial,results}/* iSS/results/* urqmd/initial.f14ex
+
+done
+
+
+echo
+msg "${nsuccess}/${nev} events were successful"

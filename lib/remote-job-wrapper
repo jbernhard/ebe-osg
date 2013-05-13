@@ -1,0 +1,188 @@
+#!/bin/bash
+
+# provide some information about the host we are running on
+function host_info()
+{
+    echo 
+    echo "Running on" `hostname -f` "($OSG_SITE_NAME)"
+
+    echo
+    echo "uname -a"
+    uname -a
+
+    echo
+    echo -n "OS: "
+    if [ -e /etc/redhat-release ]; then
+        echo "RedHat (maybe derivative)"
+        cat /etc/redhat-release
+    else
+        if [ -e /etc/debian_version ]; then
+            echo "Debian"
+            cat /etc/debian_version
+        else
+            echo "Unknown"
+        fi
+    fi
+
+    echo
+    echo "ulimit -a"
+    ulimit -a
+
+    echo
+    echo "/usr/bin/env"
+    /usr/bin/env
+    
+    echo
+    echo "cat /proc/cpuinfo"
+    cat /proc/cpuinfo
+    
+    echo
+    echo "cat /proc/meminfo"
+    cat /proc/meminfo
+
+    echo
+    echo "---------------------------------------------------"
+    echo
+}
+
+
+
+# use gridftp to stage in model and inputs
+function stage_in()
+{
+    cd $WORK_DIR
+
+    # formatting
+    #globus-url-copy -v -notpt -nodcau \
+    #                $BASE_URL/run-event \
+    #                file://$WORK_DIR/msg \
+    #                || return 1
+
+    ## event script
+    #globus-url-copy -v -notpt -nodcau \
+    #                $BASE_URL/run-event \
+    #                file://$WORK_DIR/run-event \
+    #                || return 1
+    #chmod 755 run-event
+
+    # executables and related files
+    globus-url-copy -v -notpt -nodcau \
+                    $BASE_URL/lib/event.tar.gz \
+                    file://$WORK_DIR/event.tar.gz \
+                    || return 1
+
+    # input files
+    for F in ${INPUT_FILES[@]}; do
+      globus-url-copy -v -notpt -nodcau \
+                      $BASE_URL/$F \
+                      file://$WORK_DIR/`basename $F` \
+                      || return 1
+    done
+
+    return 0
+}
+
+
+# use gridftp to stage out results
+function stage_out()
+{
+    cd $WORK_DIR
+
+    # event output
+    #globus-url-copy -v -create-dest -notpt -nodcau \
+    #                file://$WORK_DIR/event.outerr \
+    #                $BASE_URL/runs/$RUN_ID/logs/$JOB_ID.event.outerr \
+    #                || return 1
+
+    globus-url-copy -v -create-dest -notpt -nodcau \
+                    file://$WORK_DIR/event.outerr \
+                    $DEST_URL/$RUN_ID/$JOB_ID.event.outerr \
+                    || return 1
+
+    # urqmd results
+    #for F in $WORK_DIR/urqmd/*.result.f13.gz; do
+    #  globus-url-copy -v -create-dest -notpt -nodcau \
+    #                  file://$F \
+    #                  $BASE_URL/runs/$RUN_ID/outputs/$JOB_ID.`basename $F` \
+    #                  || return 1
+    #done
+
+    for F in $WORK_DIR/urqmd/*.result.f13.gz; do
+      globus-url-copy -v -create-dest -notpt -nodcau \
+                      file://$F \
+                      $DEST_URL/$RUN_ID/$JOB_ID.`basename $F` \
+                      || return 1
+    done
+
+    return 0
+}
+
+
+# execute the model
+function run_model()
+{
+    cd $WORK_DIR
+
+    tar xzf event.tar.gz
+    chmod 755 run-event
+    . msg
+
+    # identifier in the output file
+    msg 'event-by-event OSG remote-job-wrapper' > event.outerr
+    msg2 "run_id:  $RUN_ID" >> event.outerr
+    msg2 "job_id:  $JOB_ID" >> event.outerr
+    echo >> event.outerr
+
+    # do it
+    ./run-event `for F in ${INPUT_FILES[@]}; do basename $F; done` &>> event.outerr
+    EXIT_CODE=$?
+    
+    # if failure, put the last lines on stdout - useful for debugging
+    if [ "x$EXIT_CODE" != "x0" ]; then
+        tail -n 500 event.outerr
+    fi
+    return $EXIT_CODE
+}
+
+
+# run id is the first argument
+RUN_ID=$1
+
+# job id is the second argument
+JOB_ID=$2
+
+# gridftp base url
+BASE_URL=$3
+
+DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/jeb65/ebe
+
+# input files
+shift 3
+INPUT_FILES=$@
+
+# keep the exit code to the end
+EXIT_CODE=1
+
+# remember start dir
+START_DIR=`pwd`
+
+# first, collect some information about the environment
+host_info
+
+# grid environment set up
+if [ "x$PATH" = "x" ]; then
+    export PATH="/usr/bin:/bin"
+fi
+. $OSG_GRID/setup.sh || {
+    echo "Unable to source \$OSG_GRID/setup.sh"
+    exit 1
+}
+
+WORK_DIR=`pwd`
+
+# is it also very important to do the cleanup in case of failure
+trap cleanup 1 2 3 6
+
+(stage_in && run_model $RUN_ID $JOB_ID && stage_out)
+
+exit $?

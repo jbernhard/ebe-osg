@@ -1,0 +1,15 @@
+MC-Glb.:
+finalFactor = 56.763
+alpha = 0.118
+eta/s = 0.08
+
+MC-KLN:
+finalFactor = 9.923472
+lambda = 0.138
+eta/s = 0.20
+
+both:
+IEOS = 7 (s95p-v0-PCE)
+VisBeta = 0.5
+tau_0 = 0.6 fm/c
+Edec = 0.502 GeV/(fm^3) T_sw = 0.165 MeV

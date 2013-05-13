@@ -1,0 +1,13 @@
+superMC nev=2
+superMC which_mc_model=5
+superMC sub_model=1
+superMC finalFactor=56.763
+superMC alpha=0.118
+VISHNew T0=0.6
+VISHNew etas=0.08
+VISHNew VisBeta=0.5
+VISHNew Edec=0.502
+superMC Npmin=17
+superMC Npmax=25
+superMC bmin=10.4
+superMC bmax=15.2
