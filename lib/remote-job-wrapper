@@ -116,6 +116,9 @@ function run_model()
     if [ "x$EXIT_CODE" != "x0" ]; then
         tail -n 500 eventslog
     fi
+
+    gzip -v eventslog
+
     return $EXIT_CODE
 }
 
