@@ -52,29 +52,16 @@ function stage_in()
 {
     cd $WORK_DIR
 
-    # formatting
-    #globus-url-copy -v -notpt -nodcau \
-    #                $BASE_URL/run-event \
-    #                file://$WORK_DIR/msg \
-    #                || return 1
-
-    ## event script
-    #globus-url-copy -v -notpt -nodcau \
-    #                $BASE_URL/run-event \
-    #                file://$WORK_DIR/run-event \
-    #                || return 1
-    #chmod 755 run-event
-
-    # executables and related files
+    # EbE package
     globus-url-copy -v -notpt -nodcau \
-                    $BASE_URL/lib/event.tar.gz \
+                    $SRC_URL/lib/event.tar.gz \
                     file://$WORK_DIR/event.tar.gz \
                     || return 1
 
     # input files
     for F in ${INPUT_FILES[@]}; do
       globus-url-copy -v -notpt -nodcau \
-                      $BASE_URL/$F \
+                      $SRC_URL/$F \
                       file://$WORK_DIR/`basename $F` \
                       || return 1
     done
@@ -88,25 +75,13 @@ function stage_out()
 {
     cd $WORK_DIR
 
-    # event output
-    #globus-url-copy -v -create-dest -notpt -nodcau \
-    #                file://$WORK_DIR/log \
-    #                $BASE_URL/runs/$RUN_ID/logs/$JOB_ID.log \
-    #                || return 1
-
+    # log file
     globus-url-copy -v -create-dest -notpt -nodcau \
                     file://$WORK_DIR/eventslog \
                     $DEST_URL/$RUN_ID/$JOB_ID.log \
                     || return 1
 
     # urqmd results
-    #for F in $WORK_DIR/urqmd/*.f13.gz; do
-    #  globus-url-copy -v -create-dest -notpt -nodcau \
-    #                  file://$F \
-    #                  $BASE_URL/runs/$RUN_ID/outputs/$JOB_ID.`basename $F` \
-    #                  || return 1
-    #done
-
     for F in $WORK_DIR/urqmd/*.f13.gz; do
       globus-url-copy -v -create-dest -notpt -nodcau \
                       file://$F \
@@ -151,13 +126,12 @@ RUN_ID=$1
 # job id is the second argument
 JOB_ID=$2
 
-# gridftp base url
-BASE_URL=$3
-
-DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/jeb65/ebe
+# gridftp URLs
+SRC_URL=$3
+DEST_URL=$4
 
 # input files
-shift 3
+shift 4
 INPUT_FILES=$@
 
 # keep the exit code to the end

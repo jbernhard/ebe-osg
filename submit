@@ -49,8 +49,14 @@ mkdir -p $RUN_DIR/{condor,logs,dag}
 touch $RUN_DIR/alljobs.log
 chmod 644 $RUN_DIR/alljobs.log
 
-# gridftp base urls
-BASE_URL=gsiftp://`hostname -f`"$TOP_DIR"
+# gridftp source location
+# engage server + cwd
+SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
+
+# gridftp destination
+# files will be placed in "$DEST_URL/$RUN_ID"
+DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/`whoami`/ebe
+
 
 USER_ID=`id -u`
 
@@ -81,7 +87,7 @@ periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 
 executable = ../../lib/remote-job-wrapper
-arguments = $RUN_ID $JOB_ID $BASE_URL ${INPUT_FILES[@]}
+arguments = $RUN_ID $JOB_ID $SRC_URL $DEST_URL ${INPUT_FILES[@]}
 
 should_transfer_files = YES
 WhenToTransferOutput = ON_EXIT
