@@ -1,8 +1,10 @@
-#!/bin/bash
-
 #
 # C++ settings
 #
+
+# try to load Intel C/C++ compiler
+. /etc/profile.d/module.sh
+module load intelc/11.1_072
 
 # prefer Intel, fall back to GNU
 if which icpc &> /dev/null; then

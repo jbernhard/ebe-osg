@@ -1,8 +1,10 @@
-#!/bin/bash
-
 #
 # Fortran settings
 #
+
+# try to load Intel Fortran compiler
+. /etc/profile.d/module.sh
+module load intelf/11.1_072
 
 # prefer Intel, fall back to GNU
 if which ifort &> /dev/null; then
