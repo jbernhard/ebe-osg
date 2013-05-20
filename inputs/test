@@ -11,3 +11,4 @@ superMC Npmin=17
 superMC Npmax=25
 superMC bmin=10.4
 superMC bmax=15.2
+iSS     MC_sampling=2
