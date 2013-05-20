@@ -18,9 +18,10 @@ msg 'starting event[s]...'
 echo
 msg 'reading input files'
 
-# arrays to hold superMC and VISHNew settings
+# arrays to hold superMC, VISHNew, iSS settings
 smc=()
 vn=()
+is=()
 
 # scan through input file[s]
 for file in $@; do
@@ -30,11 +31,14 @@ for file in $@; do
 
     # append settings to appropriate arrays
     case $1 in
-      'superMC') 
+      'superMC')
         smc=(${smc[@]} $2)
         ;;
       'VISHNew') 
         vn=(${vn[@]} $2)
+        ;;
+      'iSS')
+        iss=(${iss[@]} $2)
         ;;
       *)
         warning "ignoring unknown setting:  $line"
@@ -48,6 +52,7 @@ echo
 msg 'detected settings'
 msg2 "superMC:  ${smc[*]}"
 msg2 "VISHNew:  ${vn[*]}"
+msg2 "iSS:      ${iss[*]}"
 
 
 
@@ -107,7 +112,7 @@ for (( i=0; i<$nev; i++ )); do
   echo
   msg 'running freeze-out hypersurface sampler'
   cd iSS 
-  time ./iSS || { 
+  time ./iSS ${iss[@]} || {
     warning "iSS failed for event ${i}, skipping to next event"
     continue 
   }
