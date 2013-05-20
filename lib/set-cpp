@@ -9,15 +9,14 @@ module load intelc/11.1_072
 # prefer Intel, fall back to GNU
 if which icpc &> /dev/null; then
   CC=icpc
-  #CFLAGS="${CFLAGS} -fast -axsse4.2,sse4.1"
   CFLAGS="${CFLAGS} -O3 -ipo -no-prec-div -static -axsse4.2,sse4.1 -msse2"
 else
   CC=g++
   CFLAGS=" ${CFLAGS} -static"
 fi
 
-#CFLAGS="`gsl-config --cflags --libs` ${CFLAGS}"
 # gsl-config won't work because gsl is installed to ~/usr
+# set flags manually
 CFLAGS="${CFLAGS} -I/usr/include -L/usr/lib -lm -I${HOME}/usr/include -L${HOME}/usr/lib -lgsl -lgslcblas"
 
 echo $CC $CFLAGS
