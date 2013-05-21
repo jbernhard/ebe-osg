@@ -1,12 +1,31 @@
 #!/bin/bash
 
 
+#
 # startup
+#
 
+
+# output functions
 . msg
 
-msg 'starting event[s]...'
+# parses standard .ini config files
+# returns key=value pairs for the desired section
+# $1 = filename
+# $2 = section
+parse_ini () {
+  sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
+    -e 's/;.*$//' \
+    -e 's/[[:space:]]*$//' \
+    -e 's/^[[:space:]]*//' \
+    < $1 \
+    | sed -n -e "/^\[$2\]/,/^\s*\[/{/^[^;].*\=.*/p;}"
+}
 
+
+
+
+msg 'starting event[s]...'
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -15,36 +34,24 @@ msg 'starting event[s]...'
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
+
 echo
 msg 'reading input files'
 
-# arrays to hold superMC, VISHNew, iSS settings
+# init. arrays to hold superMC, VISHNew, iSS settings
 smc=()
 vn=()
 is=()
 
-# scan through input file[s]
+# read each input file
 for file in $@; do
   msg2 "$file"
-  while read line; do
-    set $line
 
-    # append settings to appropriate arrays
-    case $1 in
-      'superMC')
-        smc=(${smc[@]} $2)
-        ;;
-      'VISHNew') 
-        vn=(${vn[@]} $2)
-        ;;
-      'iSS')
-        iss=(${iss[@]} $2)
-        ;;
-      *)
-        warning "ignoring unknown setting:  $line"
-        ;;
-    esac
-  done < $file
+  # append settings from ini sections to corresponding arrays
+  smc=(${smc[@]} $(parse_ini $file 'superMC'))
+  vn=(${vn[@]} $(parse_ini $file 'VISHNew'))
+  iss=(${iss[@]} $(parse_ini $file 'iSS'))
 done
 
 
