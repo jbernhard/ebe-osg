@@ -1,4 +1,5 @@
-superMC Npmin=390
-superMC Npmax=401
-superMC bmin=0.0
-superMC bmax=3.2
+[superMC]
+Npmin=390
+Npmax=401
+bmin=0.0
+bmax=3.2

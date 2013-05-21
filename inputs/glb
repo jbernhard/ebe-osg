@@ -1,8 +1,11 @@
-superMC which_mc_model=5
-superMC sub_model=1
-superMC finalFactor=56.763
-superMC alpha=0.118
-VISHNew T0=0.6
-VISHNew etas=0.08
-VISHNew VisBeta=0.5
-VISHNew Edec=0.502
+[superMC]
+which_mc_model=5
+sub_model=1
+finalFactor=56.763
+alpha=0.118
+
+[VISHNew]
+T0=0.6
+etas=0.08
+VisBeta=0.5
+Edec=0.502

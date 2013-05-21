@@ -1,4 +1,5 @@
-superMC Npmin=133
-superMC Npmax=159
-superMC bmin=7.2
-superMC bmax=10.1
+[superMC]
+Npmin=133
+Npmax=159
+bmin=7.2
+bmax=10.1
