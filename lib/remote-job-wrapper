@@ -117,8 +117,6 @@ function run_model()
         tail -n 500 eventslog
     fi
 
-    gzip -v eventslog
-
     return $EXIT_CODE
 }
 
