@@ -41,8 +41,8 @@ msg 'reading input files'
 
 # init. arrays to hold superMC, VISHNew, iSS settings
 smc=()
-vn=()
-is=()
+vsn=()
+iss=()
 
 # read each input file
 for file in $@; do
@@ -50,7 +50,7 @@ for file in $@; do
 
   # append settings from ini sections to corresponding arrays
   smc=(${smc[@]} $(parse_ini $file 'superMC'))
-  vn=(${vn[@]} $(parse_ini $file 'VISHNew'))
+  vsn=(${vsn[@]} $(parse_ini $file 'VISHNew'))
   iss=(${iss[@]} $(parse_ini $file 'iSS'))
 done
 
@@ -58,7 +58,7 @@ done
 echo
 msg 'detected settings'
 msg2 "superMC:  ${smc[*]}"
-msg2 "VISHNew:  ${vn[*]}"
+msg2 "VISHNew:  ${vsn[*]}"
 msg2 "iSS:      ${iss[*]}"
 
 
@@ -76,7 +76,7 @@ msg 'generating initial condition[s]'
 
 cd superMC 
 
-time ./superMC ${smc[@]} || { 
+time ./superMC ${smc[@]} || {
   error 'superMC failed, exiting'
   exit 1 
 }
@@ -104,7 +104,7 @@ for (( i=0; i<$nev; i++ )); do
   echo
   msg 'running hydro'
   cd VISHNew 
-  time ./VISHNew ${vn[@]} || { 
+  time ./VISHNew ${vsn[@]} || {
     warning "VISHnew failed for event ${i}, skipping to next event"
     continue 
   }
@@ -134,7 +134,7 @@ for (( i=0; i<$nev; i++ )); do
   echo
   msg 'running OSCAR to UrQMD converter'
   cd osc2u 
-  time ./osc2u < OSCAR.DAT || { 
+  time ./osc2u < OSCAR.DAT || {
     warning "osc2u failed for event ${i}, skipping to next event" 
     continue 
   }
@@ -154,7 +154,7 @@ for (( i=0; i<$nev; i++ )); do
   export ftn09=uqmd.burner
   export ftn10=initial.f14ex
   export ftn13=$i.f13
-  time ./urqmd.Linux || { 
+  time ./urqmd.Linux || {
     warning "UrQMD failed for event ${i}, skipping to next event"
     continue
   }
