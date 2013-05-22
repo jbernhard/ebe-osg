@@ -144,7 +144,7 @@ void KLNModel::FFconv(int iFF, int bins,
 }
 
 
-#include "kkp.cxx"
+#include "kkp.cpp"
 double KLNModel::Dgl(int iFF, double z, double Q)   // D(z,Q)
 {
   int iset = 0;   // LO FF
