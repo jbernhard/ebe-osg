@@ -61,7 +61,7 @@ c default settings for CTParam and CTOption cccccccccccccccccccccccccccccc
       CTParam(17)=1.6d0 
       CTParam(18)=.85d0 
       CTParam(19)=1.55d0
-	  CTParam(22)=1.0D0
+      CTParam(22)=1.0D0
       CTParam(25)=.9d0 
       CTParam(26)=50d0 
       CTParam(27)=1d0 
