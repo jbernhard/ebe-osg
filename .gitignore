@@ -1,9 +1,9 @@
 .gridpw
 runs/
 lib/event.tar.gz
+*.o
 lib/superMC/superMC
 lib/VISHNew/VISHNew
 lib/iSS/iSS
 lib/osc2u/osc2u
 lib/urqmd/urqmd.Linux
-lib/urqmd/obj_Linux/
