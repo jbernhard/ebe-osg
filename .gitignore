@@ -1,9 +1,18 @@
+# password file
 .gridpw
-runs/
-lib/event.tar.gz
+
+# compiler objects
 *.o
+
+# event package
+lib/event.tar.gz
+
+# binaries
 lib/superMC/superMC
 lib/VISHNew/VISHNew
 lib/iSS/iSS
 lib/osc2u/osc2u
 lib/urqmd/urqmd.Linux
+
+# OSG run output
+runs/
