@@ -4,9 +4,6 @@
 # compiler objects
 *.o
 
-# event package
-lib/event.tar.gz
-
 # binaries
 lib/superMC/superMC
 lib/VISHNew/VISHNew
