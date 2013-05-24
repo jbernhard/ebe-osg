@@ -1,10 +1,12 @@
 cmake_minimum_required (VERSION 2.6)
 project (superMC)
 
-# include C++ config if this is not a subproject of ebe-osg
+# load config script if this is not a subproject of ebe-osg
 if (NOT ebe-osg_BINARY_DIR)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
-  include(SetCXX)
+  include(SetAll)
+  SetCXX ()
+  SetGeneric ()
 endif (NOT ebe-osg_BINARY_DIR)
 
 add_executable(superMC

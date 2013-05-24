@@ -1,10 +1,10 @@
 cmake_minimum_required (VERSION 2.6)
 project (ebe-osg)
 
-# load config files
+# load config script
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
-include(SetCXX)
-include(SetFortran)
+include(SetAll)
+SetAll ()
 
 # add subprojects
 add_subdirectory (superMC)
