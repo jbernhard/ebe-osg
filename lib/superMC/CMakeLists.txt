@@ -1,8 +1,12 @@
 cmake_minimum_required (VERSION 2.6)
 project (superMC)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../CMake")
-find_package(GSL REQUIRED)
+# normally, GSL is loaded by ebe-osg
+# but if this is a separate build, GSL must be loaded here
+if (NOT ebe-osg_BINARY_DIR)
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
+  find_package(GSL REQUIRED)
+endif (NOT ebe-osg_BINARY_DIR)
 
 add_executable(superMC 
   main.cpp 
@@ -26,4 +30,5 @@ add_executable(superMC
   Table.cpp
   )
 
+# link to GSL
 target_link_libraries(superMC ${GSL_LIBRARIES})
