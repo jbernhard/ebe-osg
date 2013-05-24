@@ -8,3 +8,4 @@ find_package(GSL REQUIRED)
 
 # add subprojects
 add_subdirectory (superMC)
+add_subdirectory (iSS)
