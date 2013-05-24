@@ -54,16 +54,14 @@ if( WIN32 AND NOT CYGWIN AND NOT MSYS )
   )
 else( WIN32 AND NOT CYGWIN AND NOT MSYS )
   if( UNIX OR MSYS )
-    find_program( GSL_CONFIG_EXECUTABLE gsl-config
-      /usr/bin/
-    )
+    find_program( GSL_CONFIG_EXECUTABLE gsl-config /usr/bin/ )
      
     if( GSL_CONFIG_EXECUTABLE )
       set( GSL_FOUND ON )
        
       # run the gsl-config program to get cxxflags
       execute_process(
-        COMMAND sh "${GSL_CONFIG_EXECUTABLE}" --cflags
+        COMMAND bash "${GSL_CONFIG_EXECUTABLE}" --cflags
         OUTPUT_VARIABLE GSL_CFLAGS
         RESULT_VARIABLE RET
         ERROR_QUIET
@@ -73,25 +71,20 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
         separate_arguments( GSL_CFLAGS )
  
         # parse definitions from cflags; drop -D* from CFLAGS
-        string( REGEX MATCHALL "-D[^;]+"
-          GSL_DEFINITIONS  "${GSL_CFLAGS}" )
-        string( REGEX REPLACE "-D[^;]+;" ""
-          GSL_CFLAGS "${GSL_CFLAGS}" )
+        string( REGEX MATCHALL "-D[^;]+" GSL_DEFINITIONS  "${GSL_CFLAGS}" )
+        string( REGEX REPLACE "-D[^;]+;" "" GSL_CFLAGS "${GSL_CFLAGS}" )
  
         # parse include dirs from cflags; drop -I prefix
-        string( REGEX MATCHALL "-I[^;]+"
-          GSL_INCLUDE_DIRS "${GSL_CFLAGS}" )
-        string( REPLACE "-I" ""
-          GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}")
-        string( REGEX REPLACE "-I[^;]+;" ""
-          GSL_CFLAGS "${GSL_CFLAGS}")
+        string( REGEX MATCHALL "-I[^;]+" GSL_INCLUDE_DIRS "${GSL_CFLAGS}" )
+        string( REPLACE "-I" "" GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}")
+        string( REGEX REPLACE "-I[^;]+;" "" GSL_CFLAGS "${GSL_CFLAGS}")
       else( RET EQUAL 0 )
         set( GSL_FOUND FALSE )
       endif( RET EQUAL 0 )
  
       # run the gsl-config program to get the libs
       execute_process(
-        COMMAND sh "${GSL_CONFIG_EXECUTABLE}" --libs
+        COMMAND bash "${GSL_CONFIG_EXECUTABLE}" --libs
         OUTPUT_VARIABLE GSL_LIBRARIES
         RESULT_VARIABLE RET
         ERROR_QUIET
@@ -101,17 +94,11 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
         separate_arguments( GSL_LIBRARIES )
  
         # extract linkdirs (-L) for rpath (i.e., LINK_DIRECTORIES)
-        string( REGEX MATCHALL "-L[^;]+"
-          GSL_LIBRARY_DIRS "${GSL_LIBRARIES}" )
-        string( REPLACE "-L" ""
-          GSL_LIBRARY_DIRS "${GSL_LIBRARY_DIRS}" )
+        string( REGEX MATCHALL "-L[^;]+" GSL_LIBRARY_DIRS "${GSL_LIBRARIES}" )
+        string( REPLACE "-L" "" GSL_LIBRARY_DIRS "${GSL_LIBRARY_DIRS}" )
       else( RET EQUAL 0 )
         set( GSL_FOUND FALSE )
       endif( RET EQUAL 0 )
-       
-      MARK_AS_ADVANCED(
-        GSL_CFLAGS
-      )
     else( GSL_CONFIG_EXECUTABLE )
       message( FATAL_ERROR "gsl-config not found.")
     endif( GSL_CONFIG_EXECUTABLE )
