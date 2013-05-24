@@ -6,6 +6,11 @@ project (ebe-osg)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 find_package(GSL REQUIRED)
 
+# manually enable Fortran, set flags
+enable_language (Fortran)
+set (CMAKE_Fortran_FLAGS "-cpp")
+
 # add subprojects
 add_subdirectory (superMC)
 add_subdirectory (iSS)
+add_subdirectory (VISHNew)
