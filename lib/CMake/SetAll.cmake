@@ -13,13 +13,8 @@ macro (SetFortran)
   set (CMAKE_Fortran_FLAGS "-cpp")
 endmacro (SetFortran)
 
-# settings for both C++ and Fortran
-macro (SetGeneric)
-endmacro (SetGeneric)
-
 # shortcut to call all the above macros
 macro (SetAll)
   SetCXX ()
   SetFortran ()
-  SetGeneric ()
 endmacro (SetAll)

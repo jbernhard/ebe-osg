@@ -6,7 +6,6 @@ if (NOT ebe-osg_BINARY_DIR)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
   include(SetAll)
   SetFortran ()
-  SetGeneric ()
 endif (NOT ebe-osg_BINARY_DIR)
 
 add_executable(osc2u
