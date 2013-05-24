@@ -1,11 +1,10 @@
 cmake_minimum_required (VERSION 2.6)
 project (superMC)
 
-# normally, GSL is loaded by ebe-osg
-# but if this is a separate build, GSL must be loaded here
+# include C++ config if this is not a subproject of ebe-osg
 if (NOT ebe-osg_BINARY_DIR)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
-  find_package(GSL REQUIRED)
+  include(SetCXX)
 endif (NOT ebe-osg_BINARY_DIR)
 
 add_executable(superMC
