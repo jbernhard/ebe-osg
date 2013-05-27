@@ -1,13 +1,3 @@
-cmake_minimum_required (VERSION 2.6)
-project (superMC)
-
-# load config script if this is not a subproject of ebe-osg
-if (NOT ebe-osg_BINARY_DIR)
-  list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
-  include(SetAll)
-  SetCXX ()
-endif (NOT ebe-osg_BINARY_DIR)
-
 add_executable(superMC
   main.cpp
   Bases.cpp
@@ -30,5 +20,11 @@ add_executable(superMC
   Table.cpp
   )
 
-# link to GSL
+# suppress warnings if requested
+if (QUIET)
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
+endif (QUIET)
+
+# requires GSL
+find_package(GSL REQUIRED)
 target_link_libraries(superMC ${GSL_LIBRARIES})

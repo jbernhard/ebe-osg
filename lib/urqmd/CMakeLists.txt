@@ -1,13 +1,3 @@
-cmake_minimum_required (VERSION 2.6)
-project (urqmd)
-
-# load config script if this is not a subproject of ebe-osg
-if (NOT ebe-osg_BINARY_DIR)
-  list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
-  include(SetAll)
-  SetFortran ()
-endif (NOT ebe-osg_BINARY_DIR)
-
 add_executable(urqmd
   urqmd.f
   addpart.f
@@ -44,3 +34,8 @@ add_executable(urqmd
   boxprg.f
   shine.f
   )
+
+# suppress warnings if requested
+if (QUIET)
+  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
+endif (QUIET)
