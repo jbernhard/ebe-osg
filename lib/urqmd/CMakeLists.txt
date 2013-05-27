@@ -1,4 +1,6 @@
-add_executable(urqmd
+set (LOCAL_NAME urqmd)
+
+add_executable(${LOCAL_NAME}
   urqmd.f
   addpart.f
   angdis.f
@@ -39,3 +41,7 @@ add_executable(urqmd
 if (QUIET)
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
 endif (QUIET)
+
+# install compiled binary and its dependencies
+install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
+install (FILES uqmd.burner DESTINATION ${LOCAL_NAME})
