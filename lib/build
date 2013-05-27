@@ -1,0 +1,23 @@
+#!/bin/bash
+
+
+# store this for later
+STARTDIR=$PWD
+
+# temporary dir for cmake output
+BUILDDIR='/tmp/ebe-osg-build'
+
+# number of jobs = number of CPUs + 1
+NJOBS=$(( `grep -c processor /proc/cpuinfo` + 1 ))
+
+
+[[ -d $BUILDDIR ]] && rm -rf $BUILDDIR
+
+mkdir $BUILDDIR || exit 1
+cd $BUILDDIR
+
+cmake -DQUIET=ON $STARTDIR || exit 1
+make -j$NJOBS || exit 1
+make package || exit 1
+
+cp -v ebe.tar.gz $STARTDIR
