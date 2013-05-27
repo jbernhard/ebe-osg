@@ -14,11 +14,22 @@ if (QUIET)
 endif (QUIET)
 
 
+# static linking on by default
+option(STATIC "Compile statically linked binaries." ON)
+
+if (STATIC)
+  message (STATUS "Selected static build, binaries will be compiled with static linking.")
+endif (STATIC)
+
+
 
 #
 # C++
 #
 
+if (STATIC)
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
+endif (STATIC)
 
 
 #
@@ -26,6 +37,10 @@ endif (QUIET)
 #
 
 enable_language (Fortran)
+
+if (STATIC)
+  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -static")
+endif (STATIC)
 
 
 # add subprojects
