@@ -42,6 +42,8 @@ if (QUIET)
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
 endif (QUIET)
 
+set (CMAKE_SHARED_LIBRARY_Fortran_FLAGS "-z muldefs")
+
 # install compiled binary and its dependencies
 install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
 install (FILES uqmd.burner DESTINATION ${LOCAL_NAME})

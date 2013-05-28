@@ -10,6 +10,15 @@ BUILDDIR='/tmp/ebe-osg-build'
 # number of jobs = number of CPUs + 1
 NJOBS=$(( `grep -c processor /proc/cpuinfo` + 1 ))
 
+# try to load Intel compilers
+. /etc/profile.d/module.sh
+module load intelc/11.1_072 intelf/11.1_072
+
+hash icpc && export CXX=icpc
+hash ifort && export FC=ifort
+
+
+
 
 [[ -d $BUILDDIR ]] && rm -rf $BUILDDIR
 
