@@ -1,15 +1,5 @@
 # password file
 .gridpw
 
-# compiler objects
-*.o
-
-# binaries
-lib/superMC/superMC
-lib/VISHNew/VISHNew
-lib/iSS/iSS
-lib/osc2u/osc2u
-lib/urqmd/urqmd.Linux
-
 # OSG run output
 runs/
