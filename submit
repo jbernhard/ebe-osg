@@ -2,7 +2,7 @@
 
 set -e
 
-#############################################################################
+
 #
 # settings
 #
@@ -13,15 +13,22 @@ MAX_WALL_TIME=24
 # megabytes
 MEMORY_REQUIREMENT=1024
 
-#############################################################################
+# top dir
+TOP_DIR=`pwd`
+
+# gridftp source location
+# engage server + cwd
+SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
+
+# gridftp destination
+# files will be placed in "$DEST_URL/$RUN_ID"
+DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-events
 
 
-# load output functions
-source lib/msg
 
-# init proxy if not enough time remains
-grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 2 )):00 || grid-proxy-init -valid $(( $MAX_WALL_TIME * 3 )):00 -pwstdin < .gridpw
-
+#
+# initialization
+#
 
 # first argument is number of jobs to submit
 NUM_RUNS=$1
@@ -34,35 +41,34 @@ for F in ${INPUT_FILES[@]}; do
   INPUT_FILES_JOINED="${INPUT_FILES_JOINED}_`basename $F`"
 done
 
+# load output functions
+source lib/msg
+
+# init proxy if not enough time remains
+grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 2 )):00 || grid-proxy-init -valid $(( $MAX_WALL_TIME * 3 )):00 -pwstdin < .gridpw
+
+
+
+#
+# generate jobs
+#
+
 msg "Generating $NUM_RUNS jobs for input file[s] ${INPUT_FILES[@]}"
 
-# top dir
-TOP_DIR=`pwd`
-
-# runid
+# generate run id
 RUN_ID="`/bin/date +'%F_%H%M%S'`_${NUM_RUNS}jobs_${INPUT_FILES_JOINED:1}"
 msg "Run id is $RUN_ID"
 
-# run dir
+# create run dir and subfolders
 RUN_DIR=$TOP_DIR/runs/$RUN_ID
 mkdir -p $RUN_DIR/{condor,logs,dag}
 touch $RUN_DIR/alljobs.log
 chmod 644 $RUN_DIR/alljobs.log
 
-# gridftp source location
-# engage server + cwd
-SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
-
-# gridftp destination
-# files will be placed in "$DEST_URL/$RUN_ID"
-DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-events
-
-
 USER_ID=`id -u`
 
 for (( JOB_ID=0; JOB_ID<$NUM_RUNS; JOB_ID++ )); do
     msg2 "Generating job $JOB_ID"
-    #mkdir -p $RUN_DIR/logs/$JOB_ID
 
     # condor submit file
     cd $RUN_DIR
@@ -107,4 +113,5 @@ EOF
     echo "RETRY  job_$JOB_ID 3" >> dag/master
 done
 
+# submit
 condor_submit_dag -notification NEVER -maxidle 200 dag/master
