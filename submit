@@ -55,7 +55,7 @@ SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
 
 # gridftp destination
 # files will be placed in "$DEST_URL/$RUN_ID"
-DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/`whoami`/ebe-events
+DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-events
 
 
 USER_ID=`id -u`
