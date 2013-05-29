@@ -6,7 +6,7 @@
 #
 
 # temporary dir for cmake output
-BUILDDIR='/dev/shm/ebe-osg-build'
+BUILDDIR="/dev/shm/$USER/ebe-osg-build"
 
 
 
@@ -51,7 +51,7 @@ _intel () {
 _cmake () {
   [[ -d $BUILDDIR ]] && rm -rf $BUILDDIR
 
-  mkdir $BUILDDIR || return 1
+  mkdir -p $BUILDDIR || return 1
   cd $BUILDDIR
 
   cmake -DQUIET=$QUIET $STARTDIR || return 1
