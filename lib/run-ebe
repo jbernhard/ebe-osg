@@ -7,7 +7,7 @@
 
 
 # output functions
-. msg
+source msg
 
 # parses standard .ini config files
 # returns key=value pairs for the desired section

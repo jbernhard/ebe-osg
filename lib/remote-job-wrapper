@@ -99,7 +99,7 @@ function run_model()
     cd $WORK_DIR
 
     tar xzf ebe-osg.tar.gz
-    . msg
+    source msg
 
     # identifier in the output file
     msg 'event-by-event OSG remote-job-wrapper' > eventslog

@@ -17,7 +17,7 @@ MEMORY_REQUIREMENT=1024
 
 
 # load output functions
-. lib/msg
+source lib/msg
 
 # init proxy if not enough time remains
 grid-proxy-info -exists -valid 2:00 || grid-proxy-init -valid 24:00 -pwstdin < .gridpw
