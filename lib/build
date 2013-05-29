@@ -16,8 +16,8 @@ hash icpc && export CXX=icpc
 hash ifort && export FC=ifort
 
 
-# number of processor cores
-NPROC=$(grep -c processor /proc/cpuinfo)
+# number of jobs = number of cores + 1
+NJOB=$(( `getconf _NPROCESSORS_ONLN` + 1 ))
 
 
 [[ -d $BUILDDIR ]] && rm -rf $BUILDDIR
@@ -26,7 +26,7 @@ mkdir $BUILDDIR || exit 1
 cd $BUILDDIR
 
 cmake $STARTDIR || exit 1
-make -j$NPROC || exit 1
+make -j$NJOB || exit 1
 make package || exit 1
 #
 #cp -v ebe.tar.gz $STARTDIR
