@@ -16,4 +16,4 @@ set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp")
 # install compiled binary and its dependencies
 install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
 install (FILES Vishydro.inp extraParas.inp DESTINATION ${LOCAL_NAME})
-install (DIRECTORY EOS Initial movie results DESTINATION ${LOCAL_NAME})
+install (DIRECTORY EOS Initial results DESTINATION ${LOCAL_NAME})
