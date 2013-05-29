@@ -44,7 +44,9 @@ endif (QUIET)
 
 # allow multiple definitions when linking
 # workaround for multiple definitions of function ranf
-set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wl,-z,muldefs")
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wl,-z,muldefs")
+endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 
 # install compiled binary and its dependencies
 install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
