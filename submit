@@ -14,7 +14,7 @@ MAX_WALL_TIME=24
 MEMORY_REQUIREMENT=1024
 
 # top dir
-TOP_DIR=`pwd`
+TOP_DIR=$PWD
 
 # gridftp source location
 # engage server + cwd
