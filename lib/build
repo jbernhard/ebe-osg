@@ -71,7 +71,7 @@ _package () {
     cd $BUILDDIR
 
     make package || return 1
-    cp -v ebe.tar.gz $STARTDIR
+    cp -v ebe-osg.tar.gz $STARTDIR
   else
     echo 'targets were specified, packaging skipped'
   fi

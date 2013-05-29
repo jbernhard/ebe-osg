@@ -105,7 +105,7 @@ install (PROGRAMS run-event DESTINATION .)
 install (FILES msg DESTINATION .)
 
 # package options
-set (CPACK_PACKAGE_FILE_NAME "ebe")
+set (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
 set (CPACK_GENERATOR "TGZ")
 set (CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
 include(CPack)

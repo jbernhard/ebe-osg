@@ -54,8 +54,8 @@ function stage_in()
 
     # EbE package
     globus-url-copy -v -notpt -nodcau \
-                    $SRC_URL/lib/event.tar.gz \
-                    file://$WORK_DIR/event.tar.gz \
+                    $SRC_URL/lib/ebe-osg.tar.gz \
+                    file://$WORK_DIR/ebe-osg.tar.gz \
                     || return 1
 
     # input files
@@ -98,7 +98,7 @@ function run_model()
 {
     cd $WORK_DIR
 
-    tar xzf event.tar.gz
+    tar xzf ebe-osg.tar.gz
     chmod 755 run-event
     . msg
 
