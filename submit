@@ -13,13 +13,6 @@ MAX_WALL_TIME=24
 # megabytes
 MEMORY_REQUIREMENT=1024
 
-# top dir
-TOP_DIR=$PWD
-
-# gridftp source location
-# engage server + cwd
-SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
-
 # gridftp destination
 # files will be placed in "$DEST_URL/$RUN_ID"
 DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-events
@@ -29,6 +22,21 @@ DEST_URL=gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-ev
 #
 # initialization
 #
+
+# check that first argument is a positive integer
+# otherwise print usage information
+if ! (( $1 > 0 )) 2> /dev/null; then
+  cat <<EOF
+usage:  $0 number_of_jobs [input_files ...]
+
+required:
+  number_of_jobs = positive integer
+
+optional:
+  input_files = relative path[s] to input file[s]
+EOF
+  exit 1
+fi
 
 # first argument is number of jobs to submit
 NUM_RUNS=$1
@@ -46,6 +54,13 @@ source lib/msg
 
 # init proxy if not enough time remains
 grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 2 )):00 || grid-proxy-init -valid $(( $MAX_WALL_TIME * 3 )):00 -pwstdin < .gridpw
+
+# top dir
+TOP_DIR=$PWD
+
+# gridftp source location
+# engage server + cwd
+SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
 
 
 
