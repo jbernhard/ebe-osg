@@ -22,13 +22,7 @@ add_executable(${LOCAL_NAME}
   Table.cpp
   )
 
-# suppress warnings if requested
-if (QUIET)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
-endif (QUIET)
-
 # require GSL
-find_package(GSL REQUIRED)
 target_link_libraries(${LOCAL_NAME} ${GSL_LIBRARIES})
 
 # install compiled binary and its dependencies

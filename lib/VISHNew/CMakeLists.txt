@@ -10,13 +10,8 @@ add_executable(${LOCAL_NAME}
   InputFun-1.29RC6.for
   )
 
-# requires preprocessor
+# require preprocessor
 set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp")
-
-# suppress warnings if requested
-if (QUIET)
-  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
-endif (QUIET)
 
 # install compiled binary and its dependencies
 install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
