@@ -99,7 +99,6 @@ function run_model()
     cd $WORK_DIR
 
     tar xzf ebe-osg.tar.gz
-    chmod 755 run-ebe
     . msg
 
     # identifier in the output file
