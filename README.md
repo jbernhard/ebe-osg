@@ -7,7 +7,7 @@ copies the raw UrQMD output to nukeserv at Duke.
 
 ## Organization 
 
-Files are organize as follows:
+Files are organized as follows:
 
   * etc/:  Miscellaneous files.
   * inputs/:  Input files, to be distributed to the OSG.
