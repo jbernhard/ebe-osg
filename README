@@ -13,7 +13,7 @@ Besides the actual EbE codes, several scripts control the workflow:
 
   * lib/compile:  Compiles all EbE codes.
   * lib/package:  Combines all necessary files into an archive for distribution on the OSG.
-  * lib/run-event:  Runs the actual event simulations.  Executes each EbE code in sequence.
+  * lib/run-ebe:  Runs the actual event simulations.  Executes each EbE code in sequence.
   * lib/remote-job-wrapper:  The Condor executable.  Responsible for copying necessary files to OSG
-      nodes, calling run-event, and then copying output to the destination.
+      nodes, calling run-ebe, and then copying output to the destination.
   * submit:  Generates and submits jobs.

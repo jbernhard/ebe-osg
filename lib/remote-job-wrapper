@@ -99,7 +99,7 @@ function run_model()
     cd $WORK_DIR
 
     tar xzf ebe-osg.tar.gz
-    chmod 755 run-event
+    chmod 755 run-ebe
     . msg
 
     # identifier in the output file
@@ -109,7 +109,7 @@ function run_model()
     echo >> eventslog
 
     # do it
-    ./run-event `for F in ${INPUT_FILES[@]}; do basename $F; done` >> eventslog 2>&1
+    ./run-ebe `for F in ${INPUT_FILES[@]}; do basename $F; done` >> eventslog 2>&1
     EXIT_CODE=$?
     
     # if failure, put the last lines on stdout - useful for debugging

@@ -101,7 +101,7 @@ add_subdirectory (urqmd)
 #
 
 # install run script and dependency
-install (PROGRAMS run-event DESTINATION .)
+install (PROGRAMS run-ebe DESTINATION .)
 install (FILES msg DESTINATION .)
 
 # package options
