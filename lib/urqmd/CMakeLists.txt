@@ -42,7 +42,9 @@ if (QUIET)
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
 endif (QUIET)
 
-set (CMAKE_SHARED_LIBRARY_Fortran_FLAGS "-z muldefs")
+# allow multiple definitions when linking
+# workaround for multiple definitions of function ranf
+set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wl,-z,muldefs")
 
 # install compiled binary and its dependencies
 install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
