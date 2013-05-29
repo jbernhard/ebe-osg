@@ -1,13 +1,21 @@
+# EbE-OSG
+
 This package provides programs and utilities for running event-by-event (EbE) heavy-ion collision
 simulations on the Open Science Grid (OSG).  By default, it runs hybrid hydro+UrQMD events and
 copies the raw UrQMD output to nukeserv at Duke.
 
-Organization is as follows:
+
+## Organization 
+
+Files are organize as follows:
 
   * etc/:  Miscellaneous files.
   * inputs/:  Input files, to be distributed to the OSG.
   * lib/:  Main library directory.  Contains the EbE codes and scripts.
   * runs/:  Created at runtime by the submit script.  Contains Condor-related files and logs.
+
+
+## Scripts
 
 Besides the actual EbE codes, several scripts control the workflow:
 
