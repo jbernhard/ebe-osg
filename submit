@@ -74,7 +74,7 @@ SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
 msg "Generating $NUM_RUNS jobs for input file[s] ${INPUT_FILES[@]}"
 
 # generate run id
-RUN_ID="`/bin/date +'%F_%H%M%S'`_${NUM_RUNS}jobs_${INPUT_FILES_JOINED:1}"
+RUN_ID="`/bin/date +'%F_%H%M%S'`_${NUM_RUNS}jobs${INPUT_FILES_JOINED}"
 msg "Run id is $RUN_ID"
 
 # create run dir and subfolders
