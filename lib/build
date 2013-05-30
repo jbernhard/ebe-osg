@@ -39,8 +39,10 @@ EOF
 
 _intel () {
   # try to load Intel compilers on Engage
-  . /etc/profile.d/module.sh
-  module load intelc/11.1_072 intelf/11.1_072
+  if [[ $HOSTNAME == 'engage-submit3.renci.org' ]]; then
+    . /etc/profile.d/module.sh
+    module load intelc/11.1_072 intelf/11.1_072
+  fi
 
   # compilers should now be in path
   # export env vars; cmake will read them
