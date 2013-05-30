@@ -28,6 +28,7 @@ options:
   -h  display this help message
   -f  force re-run CMake
   -r  repackage  [make package only, no compilation]
+  -s  link to shared libraries [static linking is default]
   -v  non-quiet build  [show compiler warnings]
 
 For testing purposes, it is possible to compile only certain targets.  TARGETS may be zero or more of
@@ -56,7 +57,7 @@ _cmake () {
   mkdir -p $BUILDDIR || return 1
   cd $BUILDDIR
 
-  cmake -DQUIET=$QUIET $STARTDIR || return 1
+  cmake -DQUIET=$QUIET -DSTATIC=$STATIC $STARTDIR || return 1
 }
 
 _make () {
@@ -105,6 +106,9 @@ FORCE=false
 # show compiler warnings
 QUIET=ON
 
+# static linking
+STATIC=ON
+
 
 
 
@@ -113,7 +117,7 @@ QUIET=ON
 #
 
 # read options
-while getopts ":hfrv" opt; do
+while getopts ":hfrsv" opt; do
   case $opt in
     h)
       _usage
@@ -124,6 +128,9 @@ while getopts ":hfrv" opt; do
       ;;
     r)
       REPACKAGE=true
+      ;;
+    s)
+      STATIC=OFF
       ;;
     v)
       QUIET=OFF
