@@ -5,6 +5,12 @@ simulations on the Open Science Grid (OSG).  By default, it runs hybrid hydro+Ur
 copies the raw UrQMD output to nukeserv at Duke.
 
 
+## Quick start
+
+  1. Compile and package:  `cd lib && ./build`.  `./build -h` for usage information.
+  2. Submit some test jobs:  `./submit 10 inputs/test`.  `./submit` for usage information.
+
+
 ## Organization 
 
 Files are organized as follows:
