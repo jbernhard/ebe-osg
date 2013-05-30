@@ -46,8 +46,8 @@ _intel () {
 
   # compilers should now be in path
   # export env vars; cmake will read them
-  hash icpc && export CXX=icpc
-  hash ifort && export FC=ifort
+  hash icpc 2> /dev/null && export CXX=icpc
+  hash ifort 2> /dev/null && export FC=ifort
 }
 
 _cmake () {
