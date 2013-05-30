@@ -50,7 +50,7 @@ if (STATIC)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -static")
 
-  # unset a bunch of shared-library crap set by the CMake-Intel modules
+  # unset a bunch of shared-library crap set by the CMake modules
   unset (CMAKE_SHARED_LIBRARY_CXX_FLAGS)
   unset (CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS)
   unset (CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
