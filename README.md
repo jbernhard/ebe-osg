@@ -11,7 +11,7 @@ copies the raw UrQMD output to nukeserv at Duke.
   2. Submit some test jobs:  `./submit 10 inputs/test`.  `./submit` for usage information.
 
 
-## Organization 
+## Basic information
 
 Files are organized as follows:
 
@@ -19,9 +19,6 @@ Files are organized as follows:
   * inputs/:  Input files, to be distributed to the OSG.
   * lib/:  Main library directory.  Contains the EbE codes and scripts.
   * runs/:  Created at runtime by the submit script.  Contains Condor-related files and logs.
-
-
-## Scripts
 
 Besides the actual EbE codes, several scripts control the workflow:
 
