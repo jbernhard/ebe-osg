@@ -56,7 +56,7 @@ done
 source lib/msg
 
 # init proxy if not enough time remains
-grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 2 )):00 || grid-proxy-init -valid $(( $MAX_WALL_TIME * 3 )):00 -pwstdin < .gridpw
+grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 4 )):00 || grid-proxy-init -valid $(( $MAX_WALL_TIME * 7 )):00 -pwstdin < .gridpw
 
 # top dir
 TOP_DIR=$PWD
