@@ -11,7 +11,7 @@ copies the raw UrQMD output to nukeserv at Duke.
   2. Submit some test jobs:  `./submit 10 inputs/test`.
 
 
-## Organization 
+## Basic information
 
 Files are organized as follows:
 
@@ -20,13 +20,12 @@ Files are organized as follows:
   * lib/:  Main library directory.  Contains the EbE codes and scripts.
   * runs/:  Created at runtime by the submit script.  Contains Condor-related files and logs.
 
-
-## Scripts
-
 Besides the actual EbE codes, several scripts control the workflow:
 
   * lib/build:  Compiles all EbE codes and creates a package for distribution on the OSG.
+    * `./build -h` for usage information.
+  * submit:  Generates and submits jobs.
+    * `./submit` for usage information.
   * lib/run-ebe:  Runs the actual event simulations.  Executes each EbE code in sequence.
   * lib/remote-job-wrapper:  The Condor executable.  Responsible for copying necessary files to OSG
       nodes, calling run-ebe, and then copying output to the destination.
-  * submit:  Generates and submits jobs.
