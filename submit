@@ -68,6 +68,14 @@ else
   warning "grid-proxy too old or doesn't exist, creating a new one"
   if [[ -f .gridpw ]];  then
     msg2 'reading password from .gridpw'
+
+    perm=$(stat -c %a .gridpw)
+    [[ "$perm" != '600' ]] && {
+      warning ".gridpw permissions are $perm (`stat -c %A .gridpw`), recommended permissions are 600 (-rw-------)"
+      read -p 'chmod 600 .gridpw? [y/N] ' ch
+      [[ "$ch" == 'y' ]] && chmod -v 600 .gridpw
+    }
+
     grid-proxy-init -valid $(( $MAX_WALL_TIME * 7 )):00 -pwstdin < .gridpw
   else
     msg2 'file .gridpw does not exist, requesting password input'
