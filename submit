@@ -23,6 +23,11 @@ DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/
 # initialization
 #
 
+# load output functions
+source lib/msg
+
+msg 'EbE-OSG job generator and submitter'
+
 # check that first argument is a positive integer
 # otherwise print usage information
 if ! (( $1 > 0 )) 2> /dev/null; then
@@ -55,20 +60,20 @@ for F in ${INPUT_FILES[@]}; do
   INPUT_FILES_JOINED="${INPUT_FILES_JOINED}_`basename $F`"
 done
 
-# load output functions
-source lib/msg
-
 # init proxy if not enough time remains
-grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 4 )):00 2> /dev/null || {
-  msg 'grid-proxy is too old, creating a new one'
+echo
+if grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 4 )):00 2> /dev/null; then
+  msg 'grid-proxy is valid'
+else
+  warning "grid-proxy too old or doesn't exist, creating a new one"
   if [[ -f .gridpw ]];  then
     msg2 'reading password from .gridpw'
     grid-proxy-init -valid $(( $MAX_WALL_TIME * 7 )):00 -pwstdin < .gridpw
   else
+    msg2 'file .gridpw does not exist, requesting password input'
     grid-proxy-init -valid $(( $MAX_WALL_TIME * 7 )):00
   fi
-  echo
-}
+fi
 
 # top dir
 TOP_DIR=$PWD
@@ -83,11 +88,12 @@ SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
 # generate jobs
 #
 
-msg "Generating $NUM_RUNS jobs for input file[s] ${INPUT_FILES[@]}"
+echo
+msg "generating $NUM_RUNS jobs for input file[s] ${INPUT_FILES[@]}"
 
 # generate run id
 RUN_ID="`/bin/date +'%F_%H%M%S'`_${NUM_RUNS}jobs${INPUT_FILES_JOINED}"
-msg "Run id is $RUN_ID"
+msg2 "run ID:  $RUN_ID"
 
 # create run dir and subfolders
 RUN_DIR=$TOP_DIR/runs/$RUN_ID
@@ -98,8 +104,6 @@ chmod 644 $RUN_DIR/alljobs.log
 USER_ID=`id -u`
 
 for (( JOB_ID=0; JOB_ID<$NUM_RUNS; JOB_ID++ )); do
-    msg2 "Generating job $JOB_ID"
-
     # condor submit file
     cd $RUN_DIR
     cat > condor/$JOB_ID <<EOF
@@ -143,5 +147,6 @@ EOF
     echo "RETRY  job_$JOB_ID 3" >> dag/master
 done
 
-# submit
+echo
+msg 'submitting jobs'
 condor_submit_dag -notification NEVER -maxidle 200 dag/master
