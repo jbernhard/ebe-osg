@@ -108,7 +108,7 @@ function run_model()
     echo >> eventslog
 
     # do it
-    ./run-ebe `for F in ${INPUT_FILES[@]}; do basename $F; done` >> eventslog 2>&1
+    time ( ./run-ebe `for F in ${INPUT_FILES[@]}; do basename $F; done` ) >> eventslog 2>&1
     EXIT_CODE=$?
     
     # if failure, put the last lines on stdout - useful for debugging
