@@ -88,6 +88,9 @@ msg "$nev ICs generated"
 
 cd ..
 
+# determine event ID padding
+max_event_id=$(( $nev - 1 ))
+pad=${#max_event_id}
 
 # do the remaining EbE routines for each generated IC
 for (( i=0; i<$nev; i++ )); do
@@ -153,7 +156,7 @@ for (( i=0; i<$nev; i++ )); do
   cd urqmd
   export ftn09=uqmd.burner
   export ftn10=initial.f14ex
-  export ftn13=$i.f13
+  export ftn13=$(printf "%0${pad}d" $i).f13   # padded event ID
   time ./urqmd || {
     warning "UrQMD failed for event ${i}, skipping to next event"
     continue
