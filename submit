@@ -105,7 +105,7 @@ msg2 "run ID:  $RUN_ID"
 
 # create run dir and subfolders
 RUN_DIR=$TOP_DIR/runs/$RUN_ID
-mkdir -p $RUN_DIR/{condor,logs,dag}
+mkdir -p $RUN_DIR/{condor,stdouterr,dag}
 touch $RUN_DIR/alljobs.log
 chmod 644 $RUN_DIR/alljobs.log
 
@@ -140,8 +140,8 @@ arguments = $RUN_ID $JOB_ID $SRC_URL $DEST_URL ${INPUT_FILES[@]}
 should_transfer_files = YES
 WhenToTransferOutput = ON_EXIT
 
-output = logs/$JOB_ID.condor.out
-error = logs/$JOB_ID.condor.err
+output = stdouterr/$JOB_ID.out
+error = stdouterr/$JOB_ID.err
 log = alljobs.log
 
 notification = NEVER
