@@ -119,9 +119,9 @@ for (( i=0; i<$NUM_RUNS; i++ )); do
   # padded job ID
   JOB_ID=$(printf "%0${PAD}d" $i)
 
-    # condor submit file
-    cd $RUN_DIR
-    cat > condor/$JOB_ID <<EOF
+  # condor submit file
+  cd $RUN_DIR
+  cat > condor/$JOB_ID <<EOF
 universe        = vanilla
 
 # Specify voms proxy here
@@ -156,10 +156,10 @@ notification = NEVER
 queue
 EOF
 
-    # update dag
-    echo "" >> dag/master.dag
-    echo "JOB    job_$JOB_ID condor/$JOB_ID" >> dag/master
-    echo "RETRY  job_$JOB_ID 3" >> dag/master
+  # update dag
+  echo "" >> dag/master.dag
+  echo "JOB    job_$JOB_ID condor/$JOB_ID" >> dag/master
+  echo "RETRY  job_$JOB_ID 3" >> dag/master
 done
 
 echo
