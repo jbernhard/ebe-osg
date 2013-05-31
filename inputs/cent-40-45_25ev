@@ -3,3 +3,4 @@ Npmin=90
 Npmax=110
 bmin=8.3
 bmax=11.4
+nev=25
