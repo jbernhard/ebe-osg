@@ -51,7 +51,7 @@ def main():
     perc = 90
     day = 24*3600
 
-    stats = np.array(['cent', '90% time', 'jobs / 24 hours'])
+    stats = np.array(['cent', '90% time', 'ev / 24h', 'nice ev', 'jobs / 1000ev'])
 
     if makeplot:
         k = 1
@@ -64,7 +64,13 @@ def main():
         cent = d[-5:] + '%'
 
         p = np.percentile(t, perc)
-        stats = np.vstack([stats, [cent, p, day/p]])
+
+        nev = day/p
+        nnev = int(nev)
+        while 1000 % nnev != 0:
+            nnev -= 1
+
+        stats = np.vstack([stats, [cent, p, nev, nnev, int(1000/nnev)]])
 
         if makeplot:
             plt.subplot(len(dirs)/2+1,2,k)
