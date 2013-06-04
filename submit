@@ -52,10 +52,6 @@ fi
 # first argument is number of jobs to submit
 NUM_RUNS=$1
 
-# determine job ID padding
-MAX_JOB_ID=$(( $NUM_RUNS - 1 ))
-PAD=${#MAX_JOB_ID}
-
 # remaining arguments are input files
 shift 
 INPUT_FILES=$@
@@ -115,10 +111,7 @@ chmod 644 $RUN_DIR/alljobs.log
 
 USER_ID=`id -u`
 
-for (( i=0; i<$NUM_RUNS; i++ )); do
-  # padded job ID
-  JOB_ID=$(printf "%0${PAD}d" $i)
-
+for (( JOB_ID=0; JOB_ID<$NUM_RUNS; JOB_ID++ )); do
   # condor submit file
   cd $RUN_DIR
   cat > condor/$JOB_ID <<EOF
