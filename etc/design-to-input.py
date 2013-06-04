@@ -7,6 +7,14 @@ import configparser
 
 def main():
 
+    if 'glb' in argv[1]:
+        glb = True
+    elif 'kln' in argv[1]:
+        glb = False
+    else:
+        print("could not determine IC model [looking for 'glb' or 'kln' in design filename]")
+        exit(1)
+
     prefix = argv[2]
 
 
@@ -24,6 +32,15 @@ def main():
 
         # makes keys case-sensitive
         ini.optionxform = str
+
+        # specify the IC model
+        if glb:
+            # glb
+            ini['superMC'] = { 'which_mc_model' : 5, 'sub_model' : 1 }
+        else:
+            # kln
+            ini['superMC'] = { 'which_mc_model' : 1, 'sub_model' : 7 }
+
 
         # initialize ini sections and values
         # use header of design file
