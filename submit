@@ -8,7 +8,7 @@ set -e
 #
 
 # max run time (hours)
-MAX_WALL_TIME=24
+MAX_WALL_TIME=23
 
 # megabytes
 MEMORY_REQUIREMENT=1024
