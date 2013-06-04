@@ -1,0 +1,11 @@
+[superMC]
+which_mc_model = 5
+sub_model = 1
+finalFactor = 37.1631916807461
+alpha = 0.180819235574869
+
+[VISHNew]
+T0 = 0.735210199715773
+ViscousC = 0.122204681907713
+VisBeta = 0.658619412774983
+
