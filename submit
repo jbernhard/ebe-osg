@@ -7,8 +7,8 @@ set -e
 # settings
 #
 
-# max run time (hours)
-MAX_WALL_TIME=23
+# max run time (seconds)
+MAX_WALL_TIME=171000    # 47.5 hours
 
 # megabytes
 MEMORY_REQUIREMENT=1024
@@ -62,7 +62,7 @@ done
 
 # init proxy if not enough time remains
 echo
-if grid-proxy-info -exists -valid $(( $MAX_WALL_TIME * 4 )):00 2> /dev/null; then
+if grid-proxy-info -exists -valid $(( $MAX_WALL_TIME / 3600 * 3 )):00 2> /dev/null; then
   msg 'grid-proxy is valid'
 else
   warning "grid-proxy too old or doesn't exist, creating a new one"
@@ -76,10 +76,10 @@ else
       [[ "$ch" == 'y' ]] && chmod -v 600 .gridpw
     }
 
-    grid-proxy-init -valid $(( $MAX_WALL_TIME * 7 )):00 -pwstdin < .gridpw
+    grid-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00 -pwstdin < .gridpw
   else
     msg2 'file .gridpw does not exist, requesting password input'
-    grid-proxy-init -valid $(( $MAX_WALL_TIME * 7 )):00
+    grid-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00
   fi
 fi
 
@@ -123,13 +123,13 @@ x509userproxy   = /tmp/x509up_u$USER_ID
 # requirements is an expression to specify machines that can run jobs
 #requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && !regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
 #requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+requirements    = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
 
 # make sure the job is being retried and rematched
 periodic_release = (NumGlobusSubmits < 5) && ((CurrentTime - EnteredCurrentStatus) > (60*60))
 
 # protect against hung jobs
-periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME*3600))
+periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
 
 # stay in queue on failures
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
