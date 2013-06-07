@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "this is the loop you are about to execute:"
+echo
+sed -n '/^for/,/^done/p' $0
+echo
+read -p 'are you sure you want to continue? ' c
+
+[[ "$c" == 'y' ]] || exit
+
+echo
+
+for (( i=10; i<32; i++ )); do
+  ./submit 100 \
+    inputs/cent/cent-00-05_10ev \
+    inputs/lhs-glb/lhs-glb-$i
+  sleep 59.5
+done
