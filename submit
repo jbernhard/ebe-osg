@@ -125,8 +125,9 @@ x509userproxy   = /tmp/x509up_u$USER_ID
 #requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
 requirements    = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
 
-# make sure the job is being retried and rematched
-periodic_release = (NumGlobusSubmits < 5) && ((CurrentTime - EnteredCurrentStatus) > (60*60))
+# release held jobs after a while
+# retry several times
+periodic_release = ((CurrentTime - EnteredCurrentStatus) > 1800) && (NumJobStarts <= 5)
 
 # protect against hung jobs
 periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
