@@ -10,7 +10,7 @@ read -p 'are you sure you want to continue? ' c
 
 echo
 
-for (( i=33; i<64; i++ )); do
+for (( i=96; i<128; i++ )); do
   ./submit 100 \
     inputs/cent/cent-00-05_10ev \
     inputs/lhs-glb/lhs-glb-$i
