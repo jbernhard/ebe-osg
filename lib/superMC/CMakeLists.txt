@@ -1,31 +1,7 @@
 set (LOCAL_NAME superMC)
 
-add_executable(${LOCAL_NAME}
-  main.cpp
-  Bases.cpp
-  MCnucl.cpp
-  GlueDensity.cpp
-  MakeDensity.cpp
-  KLNModel.cpp
-  OverLap.cpp
-  Largex.cpp
-  Regge96.cpp
-  rcBKfunc.cpp
-  MathBasics.cpp
-  ParameterReader.cpp
-  arsenal.cpp
-  EOS.cpp
-  GaussianNucleonsCal.cpp
-  NBD.cpp
-  RandomVariable.cpp
-  TableFunction.cpp
-  Table.cpp
-  )
+add_subdirectory (src)
 
-# require GSL
-target_link_libraries(${LOCAL_NAME} ${GSL_LIBRARIES})
-
-# install compiled binary and its dependencies
-install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
+# install dependencies
 install (FILES parameters.dat DESTINATION ${LOCAL_NAME})
 install (DIRECTORY data s95p-PCE DESTINATION ${LOCAL_NAME})
