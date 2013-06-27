@@ -1,5 +1,8 @@
 # password file
 .gridpw
 
+# trivial helper script
+batch-submit
+
 # OSG run output
 runs/
