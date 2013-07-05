@@ -127,7 +127,7 @@ requirements    = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_
 
 # release held jobs after a while
 # retry several times
-periodic_release = ((CurrentTime - EnteredCurrentStatus) > 1800) && (NumJobStarts <= 5)
+periodic_release = ((CurrentTime - EnteredCurrentStatus) > 600) && (NumJobStarts <= 10)
 
 # protect against hung jobs
 periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > (2*$MAX_WALL_TIME))
