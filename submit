@@ -130,7 +130,7 @@ requirements    = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_
 periodic_release = ((CurrentTime - EnteredCurrentStatus) > 1800) && (NumJobStarts <= 5)
 
 # protect against hung jobs
-periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
+periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > (2*$MAX_WALL_TIME))
 
 # stay in queue on failures
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
