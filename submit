@@ -8,7 +8,8 @@ set -e
 #
 
 # max run time (seconds)
-MAX_WALL_TIME=171000    # 47.5 hours
+#MAX_WALL_TIME=171000    # 47.5 hours
+MAX_WALL_TIME=259200    # 72 hours
 
 # megabytes
 MEMORY_REQUIREMENT=1024
@@ -123,14 +124,15 @@ x509userproxy   = /tmp/x509up_u$USER_ID
 # requirements is an expression to specify machines that can run jobs
 #requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && !regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
 #requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-requirements    = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+#requirements    = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
 
 # release held jobs after a while
 # retry several times
 periodic_release = ((CurrentTime - EnteredCurrentStatus) > 600) && (NumJobStarts <= 10)
 
 # protect against hung jobs
-periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > (2*$MAX_WALL_TIME))
+periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
 
 # stay in queue on failures
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
