@@ -2407,9 +2407,9 @@ c...MB total (->B*/->Strings/el.)
         call anndec(0,m1,i1,iz1,m2,i2,iz2,e,sigmb,gam)
         if (sigmb.gt.1d-8) then
 c meltpoint for resonant meson absorption moved to higher energies
-          meltpoint=max(1.7d0, m1+m2+.2d0)
+          meltpoint=max(2.18d0, m1+m2+.2d0)
         else
-          meltpoint=1.7d0
+          meltpoint=2.18d0
         endif
         call aqm(pimeson,nucleon,dum,nnphi)
         call aqm(i1,i2,dum,bbphi)

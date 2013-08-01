@@ -1712,7 +1712,7 @@ c..   add spectators to npart
       acttime=r0(1) 
       
 
-      call arraysort2(1.0)
+      call arraysort2(1.0d0)
       
 c     read options-file
 c     call getparams

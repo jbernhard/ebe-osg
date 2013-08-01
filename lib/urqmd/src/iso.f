@@ -412,10 +412,8 @@ c... particle exchange
       if(strit(i).eq.0)then
 c... this is now for particle+antiparticle (except nonstrange mesons)
          i12=i1*i2
-         i12a=iabs(i12)
-         nombbb=i12a.lt.maxbar**2.or.i12a.gt.minmes**2
 c... the charge conjugated states have the same weight
-         if(i12.lt.0.and.nombbb)then
+         if(i12.lt.0.and.min(iabs(i1),iabs(i2)).gt.maxbar)then
 c... for example anti-K* + K 
             if(i1.ne.-i2)c=c*5d-1
          end if

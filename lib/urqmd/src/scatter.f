@@ -638,10 +638,6 @@ c
      &   .or.
      &   (bar.eq.0.and.(nb1+nb2).gt.0)
      &  ) then
-         call delpart(inew(1))
-         call delpart(inew(2))
-         inew(1)=0
-         inew(2)=0
 
 c     store average  time and position of particles 
 	 tstring(1)=(r0(ind1)+r0(ind2))/2.
@@ -663,6 +659,11 @@ c     do likewise for MD trajectories
          rpotx(2)=rpotx(1)
          rpoty(2)=rpoty(1)
          rpotz(2)=rpotz(1)
+
+         call delpart(inew(1))
+         call delpart(inew(2))
+         inew(1)=0
+         inew(2)=0
 
 c in case of a meson-string with baryon-antibaryon creation
 c the meson-slot must be deleted

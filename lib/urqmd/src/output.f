@@ -863,6 +863,17 @@ c now read particle-output
      @        lstcoll(i),ncoll(i),origin(i),
      @        dectime(i),tform(i),xtotfac(i)
       if(abs(ityp(i)).le.maxbar)nbar=nbar+1
+
+c     initialize freeze-out slots
+         frr0(i)=r0(i)
+         frrx(i)=rx(i)
+         frry(i)=ry(i)
+         frrz(i)=rz(i)
+         frp0(i)=p0(i)
+         frpx(i)=px(i)
+         frpy(i)=py(i)
+         frpz(i)=pz(i)
+
  39   continue
       nmes=npart-nbar
       acttime=r0(1) 

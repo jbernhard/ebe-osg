@@ -401,6 +401,7 @@ c
       real*8 mutab3(0:200,0:200),stab3(0:200,0:200),msttab3(0:200,0:200)
       real*8 mustab3(0:200,0:200),cstab3(0:200,0:200)
       integer eos,stabil,antie
+      real*8 chem
 c
 c  Type declarations for variables used in function entro.
 c
