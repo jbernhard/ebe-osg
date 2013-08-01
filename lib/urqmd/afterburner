@@ -9,7 +9,7 @@
 # set environment variable ftn13 to a desired name
 # call urqmd
 # e.g.:
-# ftn09=uqmd.burner ftn10=initial.f14ex ftn13=output.f13 ./urqmd
+# ftn09=afterburner ftn10=initial.f14ex ftn13=output.f13 ./urqmd
 
 
 ### UrQMD parameters
