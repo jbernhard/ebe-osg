@@ -1,0 +1,13 @@
+This is UrQMD 3.3p1, modified for use as the afterburner in EbE-OSG.  It differs from vanilla 3.3p1 in the following ways:
+
+  * The official patches baryons.patch and gcc-4.6.patch have been applied.  Two additional patches, memory_leak.patch and output.patch are also required for
+    afterburner mode.
+
+  * The directory eosfiles/ has been removed.  These files are used in the hydro component of UrQMD, and are therefore unnecessary.  This folder represented most
+    of the disk space of UrQMD.
+
+  * The build process has been migrated to CMake.  This is for convenience only and should not affect the compiled binary.
+
+  * Minor code reorganization.
+
+  * Inclusion of the afterburner input file.
