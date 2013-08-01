@@ -1,19 +1,33 @@
-# this is a sample input-file for uqmd
-#   
-tim 8000  8000
-#     
-ctp 22 1.0
-# 
-#    random seed (only needed for error back-tracing)
-#rsd 1944955121
 #
-# let particles decay without collisions
-# cto 16 -1 
+# UrQMD afterburner input file
+#
+
+
+### usage
+# set environment variable ftn09 to the name of this file
+# set environment variable ftn10 to an extended UrQMD file 14
+# set environment variable ftn13 to a desired name
+# call urqmd
+# e.g.:
+# ftn09=uqmd.burner ftn10=initial.f14ex ftn13=output.f13 ./urqmd
+
+
+### UrQMD parameters
+
+# calculate until a late time
+# output only the final timestep
+tim 8000 8000
+
+# special option to enable afterburner mode
+ctp 22 1.0
+
+# write to file 13, suppress all others
 #f13
 f14
 f15
 f16
 f18
 f19
-#  end of file
+
+# end of file
 xxx      
