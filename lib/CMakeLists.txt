@@ -29,15 +29,7 @@ set (CMAKE_Fortran_FLAGS "-O3")
 
 
 # special flags for Intel compilers
-set (INTEL_FLAGS "-ipo -no-prec-div -axsse4.2,sse4.1 -msse2")
-
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${INTEL_FLAGS}")
-endif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${INTEL_FLAGS} -heap-arrays")
-endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+set (INTEL_FLAGS "-ipo -no-prec-div")
 
 
 # static linking on by default
@@ -49,6 +41,9 @@ if (STATIC)
   # add static to compiler flags
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -static")
+
+  # extra Intel architecture flags with static linking
+  set (INTEL_FLAGS "${INTEL_FLAGS} -axsse4.2,sse4.1 -msse2")
 
   # unset a bunch of shared-library crap set by the CMake modules
   unset (CMAKE_SHARED_LIBRARY_CXX_FLAGS)
@@ -64,6 +59,16 @@ if (STATIC)
   unset (CMAKE_SHARED_LIBRARY_RUNTIME_Fortran_FLAG_SEP)
   unset (CMAKE_SHARED_LIBRARY_SONAME_Fortran_FLAG)
 endif (STATIC)
+
+
+# append Intel flags if appropriate
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${INTEL_FLAGS}")
+endif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${INTEL_FLAGS} -heap-arrays")
+endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 
 
 # optional quiet build
