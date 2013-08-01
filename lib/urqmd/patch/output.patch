@@ -1,0 +1,20 @@
+--- output.f	2011-06-22 12:11:13.521888160 -0400
++++ output.f	2013-07-11 10:33:40.266440973 -0400
+@@ -863,6 +863,17 @@
+      @        lstcoll(i),ncoll(i),origin(i),
+      @        dectime(i),tform(i),xtotfac(i)
+       if(abs(ityp(i)).le.maxbar)nbar=nbar+1
++
++c     initialize freeze-out slots
++         frr0(i)=r0(i)
++         frrx(i)=rx(i)
++         frry(i)=ry(i)
++         frrz(i)=rz(i)
++         frp0(i)=p0(i)
++         frpx(i)=px(i)
++         frpy(i)=py(i)
++         frpz(i)=pz(i)
++
+  39   continue
+       nmes=npart-nbar
+       acttime=r0(1) 

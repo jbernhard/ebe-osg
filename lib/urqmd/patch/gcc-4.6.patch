@@ -1,0 +1,21 @@
+--- 1fluid.f	2010-03-09 16:24:59.000000000 +0100
++++ 1fluid.f	2011-12-09 13:53:10.000000000 +0100
+@@ -401,6 +401,7 @@
+       real*8 mutab3(0:200,0:200),stab3(0:200,0:200),msttab3(0:200,0:200)
+       real*8 mustab3(0:200,0:200),cstab3(0:200,0:200)
+       integer eos,stabil,antie
++      real*8 chem
+ c
+ c  Type declarations for variables used in function entro.
+ c
+--- uhmerge.f	2010-03-09 16:25:03.000000000 +0100
++++ uhmerge.f	2011-12-09 13:53:29.000000000 +0100
+@@ -1712,7 +1712,7 @@
+       acttime=r0(1) 
+       
+ 
+-      call arraysort2(1.0)
++      call arraysort2(1.0d0)
+       
+ c     read options-file
+ c     call getparams
