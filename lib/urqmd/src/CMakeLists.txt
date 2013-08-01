@@ -1,50 +1,62 @@
+### adapted from UrQMD-3.3p1 GNUmakefile and mk/{Linux,Intel}.mk
+
+# different numerical functions depending on the compiler
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
+  set (SYSTEM_FILES gnuranf.f)
+elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+  set (SYSTEM_FILES intranf.f erf.f)
+endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
+
+
 add_executable(${LOCAL_NAME}
-  urqmd.f
+  1fluid.f
   addpart.f
   angdis.f
   anndec.f
+  bessel.f
   blockres.f
+  boxprg.f
   cascinit.f
   coload.f
   dectim.f
   delpart.f
   detbal.f
   dwidth.f
-  genranf.f
+  error.f
   getmass.f
   getspin.f
+  hepnam.f
+  hepchg.f
+  hepcmp.f
   init.f
   input.f
+  iso.f
   ityp2pdg.f
-  error.f
+  jdecay2.f
   make22.f
   numrec.f
   output.f
   paulibl.f
-  jdecay2.f
-  iso.f
-  pdummy.f
   proppot.f
+  pythia6409.f
   saveinfo.f
   scatter.f
   siglookup.f
   string.f
   tabinit.f
+  uhmerge.f
+  upmerge.f
   whichres.f
-  boxprg.f
-  shine.f
+  urqmd.f
+  ${SYSTEM_FILES}
   )
+
 
 # suppress warnings if requested
 if (QUIET)
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
 endif (QUIET)
 
-# allow multiple definitions when linking
-# workaround for multiple definitions of function ranf
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wl,-z,muldefs")
-endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 
 # install compiled binary
 install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
