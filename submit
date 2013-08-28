@@ -118,6 +118,9 @@ for (( JOB_ID=0; JOB_ID<$NUM_RUNS; JOB_ID++ )); do
   cat > condor/$JOB_ID <<EOF
 universe        = vanilla
 
+# OSG project name
++ProjectName = "Duke-QGP"
+
 # Specify voms proxy here
 x509userproxy   = /tmp/x509up_u$USER_ID
 
