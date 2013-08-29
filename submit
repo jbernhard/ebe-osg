@@ -27,6 +27,9 @@ DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/
 # load output functions
 source lib/msg
 
+# password stored here
+PW_FILE='.vomspw'
+
 msg 'EbE-OSG job generator and submitter'
 
 # check that first argument is a positive integer
@@ -44,8 +47,8 @@ optional:
 The GridFTP destination may be overriden by setting it as an environment variable.  The current value is
   DEST_URL=$DEST_URL
 
-This script automatically creates a new grid-proxy if necessary.  For convenience, the grid-password will be read 
-from the file .gridpw in this directory.  If the file is not present, the password will be requested normally.
+This script automatically creates a new voms-proxy if necessary.  For convenience, the password will be read
+from the file $PW_FILE in this directory.  If the file is not present, the password will be requested normally.
 EOF
   exit 1
 fi
@@ -63,24 +66,24 @@ done
 
 # init proxy if not enough time remains
 echo
-if grid-proxy-info -exists -valid $(( $MAX_WALL_TIME / 3600 * 3 )):00 2> /dev/null; then
-  msg 'grid-proxy is valid'
+if voms-proxy-info -exists -hours $(( $MAX_WALL_TIME / 3600 * 3 )) 2> /dev/null; then
+  msg 'voms-proxy is valid'
 else
-  warning "grid-proxy too old or doesn't exist, creating a new one"
-  if [[ -f .gridpw ]];  then
-    msg2 'reading password from .gridpw'
+  warning "voms-proxy too old or doesn't exist, creating a new one"
+  if [[ -f $PW_FILE ]];  then
+    msg2 "reading password from $PW_FILE"
 
-    perm=$(stat -c %a .gridpw)
+    perm=$(stat -c %a $PW_FILE)
     [[ "$perm" != '600' ]] && {
-      warning ".gridpw permissions are $perm (`stat -c %A .gridpw`), recommended permissions are 600 (-rw-------)"
-      read -p 'chmod 600 .gridpw? [y/N] ' ch
-      [[ "$ch" == 'y' ]] && chmod -v 600 .gridpw
+      warning "$PW_FILE permissions are $perm (`stat -c %A $PW_FILE`), recommended permissions are 600 (-rw-------)"
+      read -p 'chmod 600 $PW_FILE? [y/N] ' ch
+      [[ "$ch" == 'y' ]] && chmod -v 600 $PW_FILE
     }
 
-    grid-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00 -pwstdin < .gridpw
+    voms-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00 -pwstdin < $PW_FILE
   else
-    msg2 'file .gridpw does not exist, requesting password input'
-    grid-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00
+    msg2 'file $PW_FILE does not exist, requesting password input'
+    voms-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00
   fi
 fi
 
