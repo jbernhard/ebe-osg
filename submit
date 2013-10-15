@@ -16,7 +16,7 @@ MEMORY_REQUIREMENT=1024
 # gridftp destination
 # files will be placed in "$DEST_URL/$RUN_ID"
 # take value from environment or fall back to default
-DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-events_osg-xsede}
+DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-osg-events}
 
 
 #
