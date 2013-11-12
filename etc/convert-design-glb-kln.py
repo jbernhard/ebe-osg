@@ -18,7 +18,7 @@ def main():
     design = np.loadtxt(fname,skiprows=1,unpack=True)
 
     design[0] = rescale(design[0],20,60,5,15)
-    design[1] = rescale(design[1],.05,.3,.24,.32)
+    design[1] = rescale(design[1],.05,.3,.1,.3)
 
     np.savetxt(fname.replace('glb','kln'), design.T,
             fmt='%.15f', comments='',
