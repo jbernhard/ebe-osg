@@ -8,8 +8,8 @@ set -e
 #
 
 # max run time (seconds)
-#MAX_WALL_TIME=171000    # 47.5 hours
-MAX_WALL_TIME=259200    # 72 hours
+# jobs that run longer than this are restarted
+MAX_WALL_TIME=21600   # 6 hours
 
 # megabytes
 MEMORY_REQUIREMENT=1024
@@ -17,7 +17,7 @@ MEMORY_REQUIREMENT=1024
 # gridftp destination
 # files will be placed in "$DEST_URL/$RUN_ID"
 # take value from environment or fall back to default
-DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-events}
+DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-osg-events}
 
 
 #
@@ -26,6 +26,9 @@ DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/
 
 # load output functions
 source lib/msg
+
+# password stored here
+PW_FILE='.vomspw'
 
 msg 'EbE-OSG job generator and submitter'
 
@@ -44,8 +47,8 @@ optional:
 The GridFTP destination may be overriden by setting it as an environment variable.  The current value is
   DEST_URL=$DEST_URL
 
-This script automatically creates a new grid-proxy if necessary.  For convenience, the grid-password will be read 
-from the file .gridpw in this directory.  If the file is not present, the password will be requested normally.
+This script automatically creates a new voms-proxy if necessary.  For convenience, the password will be read
+from the file $PW_FILE in this directory.  If the file is not present, the password will be requested normally.
 EOF
   exit 1
 fi
@@ -63,24 +66,24 @@ done
 
 # init proxy if not enough time remains
 echo
-if grid-proxy-info -exists -valid $(( $MAX_WALL_TIME / 3600 * 3 )):00 2> /dev/null; then
-  msg 'grid-proxy is valid'
+if voms-proxy-info -exists -hours 168 2> /dev/null; then
+  msg 'voms-proxy is valid'
 else
-  warning "grid-proxy too old or doesn't exist, creating a new one"
-  if [[ -f .gridpw ]];  then
-    msg2 'reading password from .gridpw'
+  warning "voms-proxy too old or doesn't exist, creating a new one"
+  if [[ -f $PW_FILE ]];  then
+    msg2 "reading password from $PW_FILE"
 
-    perm=$(stat -c %a .gridpw)
+    perm=$(stat -c %a $PW_FILE)
     [[ "$perm" != '600' ]] && {
-      warning ".gridpw permissions are $perm (`stat -c %A .gridpw`), recommended permissions are 600 (-rw-------)"
-      read -p 'chmod 600 .gridpw? [y/N] ' ch
-      [[ "$ch" == 'y' ]] && chmod -v 600 .gridpw
+      warning "$PW_FILE permissions are $perm (`stat -c %A $PW_FILE`), recommended permissions are 600 (-rw-------)"
+      read -p 'chmod 600 $PW_FILE? [y/N] ' ch
+      [[ "$ch" == 'y' ]] && chmod -v 600 $PW_FILE
     }
 
-    grid-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00 -pwstdin < .gridpw
+    voms-proxy-init -voms osg -valid 720:00 -pwstdin < $PW_FILE
   else
-    msg2 'file .gridpw does not exist, requesting password input'
-    grid-proxy-init -valid $(( $MAX_WALL_TIME / 3600 * 4 )):00
+    msg2 'file $PW_FILE does not exist, requesting password input'
+    voms-proxy-init -voms osg -valid 720:00
   fi
 fi
 
@@ -116,28 +119,31 @@ for (( JOB_ID=0; JOB_ID<$NUM_RUNS; JOB_ID++ )); do
   # condor submit file
   cd $RUN_DIR
   cat > condor/$JOB_ID <<EOF
-universe        = vanilla
+universe = vanilla
 
-# Specify voms proxy here
-x509userproxy   = /tmp/x509up_u$USER_ID
+# OSG project name
++ProjectName = "Duke-QGP"
+
+# grid proxy
+x509userproxy = /tmp/x509up_u$USER_ID
 
 # requirements is an expression to specify machines that can run jobs
-#requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && !regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-#requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-#requirements    = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
-requirements    = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+#requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && !regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
+#requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
+#requirements = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
 
 # release held jobs after a while
 # retry several times
 periodic_release = ((CurrentTime - EnteredCurrentStatus) > 600) && (NumJobStarts <= 10)
 
 # protect against hung jobs
-periodic_hold =  (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
+periodic_hold = (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
 
 # stay in queue on failures
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 
-executable = ../../lib/remote-job-wrapper
+executable = $TOP_DIR/lib/remote-job-wrapper
 arguments = $RUN_ID $JOB_ID $SRC_URL $DEST_URL ${INPUT_FILES[@]}
 
 should_transfer_files = YES
