@@ -1,3 +1,25 @@
+#
+# main CMakeLists.txt for ebe-osg
+#
+
+
+# list of projects to compile
+# each of these must be a directory containing a valid CMakeLists.txt
+# each path may be relative or absolute and are NOT required to be in the ebe-osg tree
+# a completely independent CMake project may be added here
+set (SUBPROJECTS
+  superMC
+  iSS
+  VISHNew
+  osc2u
+  urqmd
+  )
+
+
+
+
+### do not edit below this line
+
 cmake_minimum_required (VERSION 2.6)
 project (ebe-osg)
 
@@ -24,20 +46,12 @@ find_package(GSL REQUIRED)
 #
 
 # always want optimized binaries
-set (CMAKE_CXX_FLAGS "-O3")
-set (CMAKE_Fortran_FLAGS "-O3")
+set (CMAKE_CXX_FLAGS_OSG "-O3")
+set (CMAKE_Fortran_FLAGS_OSG "-O3")
 
 
 # special flags for Intel compilers
-set (INTEL_FLAGS "-ipo -no-prec-div -axsse4.2,sse4.1 -msse2")
-
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${INTEL_FLAGS}")
-endif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${INTEL_FLAGS} -heap-arrays")
-endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+set (INTEL_FLAGS "-ipo -no-prec-div")
 
 
 # static linking on by default
@@ -47,8 +61,11 @@ if (STATIC)
   message (STATUS "Static build")
 
   # add static to compiler flags
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
-  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -static")
+  set (CMAKE_CXX_FLAGS_OSG "${CMAKE_CXX_FLAGS_OSG} -static")
+  set (CMAKE_Fortran_FLAGS_OSG "${CMAKE_Fortran_FLAGS_OSG} -static")
+
+  # extra Intel architecture flags with static linking
+  set (INTEL_FLAGS "${INTEL_FLAGS} -axsse4.2,sse4.1 -msse2")
 
   # unset a bunch of shared-library crap set by the CMake modules
   unset (CMAKE_SHARED_LIBRARY_CXX_FLAGS)
@@ -66,32 +83,41 @@ if (STATIC)
 endif (STATIC)
 
 
+# append Intel flags if appropriate
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+  set (CMAKE_CXX_FLAGS_OSG "${CMAKE_CXX_FLAGS_OSG} ${INTEL_FLAGS}")
+endif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+  set (CMAKE_Fortran_FLAGS_OSG "${CMAKE_Fortran_FLAGS_OSG} ${INTEL_FLAGS} -heap-arrays")
+endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+
+
 # optional quiet build
 option(QUIET "Suppress warnings." OFF)
 
 if (QUIET)
   message (STATUS "Warnings will be suppressed")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
+  set (CMAKE_CXX_FLAGS_OSG "${CMAKE_CXX_FLAGS_OSG} -w")
+  set (CMAKE_Fortran_FLAGS_OSG "${CMAKE_Fortran_FLAGS_OSG} -w")
 endif (QUIET)
 
 
 # output chosen flags for reference
-message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
-message(STATUS "CMAKE_Fortran_FLAGS = ${CMAKE_Fortran_FLAGS}")
+message(STATUS "CMAKE_CXX_FLAGS_OSG = ${CMAKE_CXX_FLAGS_OSG}")
+message(STATUS "CMAKE_Fortran_FLAGS_OSG = ${CMAKE_Fortran_FLAGS_OSG}")
 
 
 
 
 #
-# subprojects
+# add subprojects
 #
 
-add_subdirectory (superMC)
-add_subdirectory (iSS)
-add_subdirectory (VISHNew)
-add_subdirectory (osc2u)
-add_subdirectory (urqmd)
+FOREACH (DIR ${SUBPROJECTS})
+  get_filename_component (BN ${DIR} NAME)
+  add_subdirectory (${DIR} ${BN})
+ENDFOREACH (DIR)
 
 
 
@@ -107,5 +133,5 @@ install (FILES msg DESTINATION .)
 # package options
 set (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
 set (CPACK_GENERATOR "TGZ")
-set (CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
+set (CPACK_INCLUDE_TOPLEVEL_DIRECTORY FALSE)
 include(CPack)
