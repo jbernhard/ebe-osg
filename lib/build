@@ -2,43 +2,30 @@
 
 
 #
-# settings
-#
-
-# temporary dir for cmake output
-BUILDDIR="/dev/shm/$USER/ebe-osg-build"
-
-
-
-#
 # functions
 #
 
 _usage () {
   cat <<EOF
-usage: $0 -[hfrv] TARGETS
+usage: $0 [OPTIONS]
 
 Compiles and packages ebe-osg.  Default behavior:
 
-  * Runs configuration [CMake] only if necessary.  May be overriden by the -f option.
+  * Creates build directory and runs CMake configuration.
   * Compiles all targets.
   * Creates a TGZ package.
 
-options:
-  -h  display this help message
-  -f  force re-run CMake
-  -r  repackage  [make package only, no compilation]
-  -s  link to shared libraries [static linking is default]
-  -v  non-quiet build  [show compiler warnings]
-
-For testing purposes, it is possible to compile only certain targets.  TARGETS may be zero or more of
-  superMC iSS VISHNew osc2u urqmd
-
-Note that the package will not be built if any targets are specified.
+Options:
+  -h             Display this help message and exit.
+  -b BUILDDIR    Set the CMake build directory -- default $BUILDDIR.  Will be created if necessary.
+  -c             Clear CMake build directory before starting build.
+  -d             Dynamic linking -- static linking is default.
+  -q             Quiet build -- hide compiler warnings.
 EOF
 }
 
-_intel () {
+
+_make () {
   # try to load Intel compilers on OSG hosts
   if [[ $HOSTNAME == 'osg-xsede.grid.iu.edu' ]]; then
     . /etc/profile.modules
@@ -52,62 +39,44 @@ _intel () {
   # export env vars; cmake will read them
   hash icpc 2> /dev/null && export CXX=icpc
   hash ifort 2> /dev/null && export FC=ifort
-}
 
-_cmake () {
-  [[ -d $BUILDDIR ]] && rm -rf $BUILDDIR
-
-  mkdir -p $BUILDDIR || return 1
+  # create build dir. if necessary
+  [[ -d $BUILDDIR ]] || mkdir -p $BUILDDIR || return 1
   cd $BUILDDIR
 
-  cmake -DQUIET=$QUIET -DSTATIC=$STATIC $STARTDIR || return 1
-}
-
-_make () {
-  cd $BUILDDIR
+  cmake \
+    -DCMAKE_BUILD_TYPE=OSG \
+    -DQUIET=$QUIET \
+    -DSTATIC=$STATIC \
+    $LIBDIR || return 1
 
   # number of jobs = number of cores + 1
   NJOB=$(( `getconf _NPROCESSORS_ONLN` + 1 ))
 
-  make -j$NJOB $TARGETS || return 1
+  make -j$NJOB || return 1
 }
 
 _package () {
-  if [[ -z "$TARGETS" ]]; then
-    cd $BUILDDIR
-
-    make package || return 1
-    cp -v ebe-osg.tar.gz $STARTDIR
-  else
-    echo 'targets were specified, packaging skipped'
-  fi
-}
-
-_full () {
-  _intel
-  _cmake || return 1
-  _make || return 1
-  _package || return 1
+  cd $BUILDDIR
+  make package || return 1
+  cp -v ebe-osg.tar.gz $LIBDIR
 }
 
 
 
 
 #
-# variables
+# default settings
 #
 
-# store this for later
-STARTDIR=$PWD
+# CMake build dir.
+BUILDDIR="/dev/shm/$USER-ebe-osg-build"
 
-# repackage only, don't compile
-REPACKAGE=false
+# clear build dir
+CLEAR=false
 
-# force cmake even if already done
-FORCE=false
-
-# show compiler warnings
-QUIET=ON
+# hide compiler warnings
+QUIET=OFF
 
 # static linking
 STATIC=ON
@@ -120,58 +89,44 @@ STATIC=ON
 #
 
 # read options
-while getopts ":hfrsv" opt; do
+while getopts ":b:hcdq" opt; do
   case $opt in
+    b)
+      if [[ -z "$OPTARG" ]]; then
+        echo "option -b requires an argument"
+        exit 1
+      else
+        BUILDDIR="$OPTARG"
+      fi
+      ;;
     h)
       _usage
       exit 0
       ;;
-    f)
-      FORCE=true
+    c)
+      CLEAR=true
       ;;
-    r)
-      REPACKAGE=true
-      ;;
-    s)
+    d)
       STATIC=OFF
       ;;
-    v)
-      QUIET=OFF
+    q)
+      QUIET=ON
       ;;
     \?)
       echo "invalid option: -$OPTARG"
+      echo
       _usage
       exit 1
       ;;
   esac
 done
 
-# get targets from command line
-shift $((OPTIND-1))
-TARGETS=$@
 
-# do full build
-if $FORCE; then
-  _full || exit 1
-  exit 0
-fi
+# location of this script -- needed later
+LIBDIR=$( cd "$( dirname "$0" )" && pwd )
 
-# package only
-if $REPACKAGE; then
-  if [[ -d $BUILDDIR ]]; then
-    _package || exit 1
-  else
-    echo "can't make package without a build directory, just do a normal run"
-    exit 1
-  fi
-  exit 0
-fi
+# remove build directory if requested
+$CLEAR && rm -rf $BUILDDIR
 
-# default:  cmake if necessary, compile, package
-if [[ -d $BUILDDIR ]]; then
-  _intel
-  _make || exit 1
-  _package || exit 1
-else
-  _full || exit 1
-fi
+# build and package
+_make && _package
