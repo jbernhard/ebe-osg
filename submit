@@ -91,7 +91,6 @@ fi
 TOP_DIR=$PWD
 
 # gridftp source location
-# engage server + cwd
 SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
 
 
