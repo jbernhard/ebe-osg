@@ -1,4 +1,4 @@
-add_executable(${LOCAL_NAME}
+add_executable(${PROJECT_NAME}
   main.cpp
   arsenal.cpp
   ParameterReader.cpp
@@ -13,4 +13,4 @@ add_executable(${LOCAL_NAME}
   )
 
 # install compiled binary
-install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
+install (TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_NAME})
