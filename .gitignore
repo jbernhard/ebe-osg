@@ -4,8 +4,5 @@
 # trivial helper script
 batch-submit
 
-# OSG run output
-runs
-
 # CMake build directory
 lib/build/

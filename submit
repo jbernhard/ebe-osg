@@ -19,6 +19,9 @@ MEMORY_REQUIREMENT=1024
 # take value from environment or fall back to default
 DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-osg-events}
 
+#
+LOG_DIR=${LOG_DIR:-/local-scratch/$USER/ebe-osg-logs}
+
 
 #
 # initialization
@@ -107,7 +110,7 @@ RUN_ID="`/bin/date +'%F_%H%M%S'`_${NUM_RUNS}jobs${INPUT_FILES_JOINED}"
 msg2 "run ID:  $RUN_ID"
 
 # create run dir and subfolders
-RUN_DIR=$TOP_DIR/runs/$RUN_ID
+RUN_DIR=$LOG_DIR/$RUN_ID
 mkdir -p $RUN_DIR/{condor,stdouterr,dag}
 touch $RUN_DIR/alljobs.log
 chmod 644 $RUN_DIR/alljobs.log
