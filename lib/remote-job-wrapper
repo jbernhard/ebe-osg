@@ -82,7 +82,7 @@ function stage_out()
                     || return 1
 
     # urqmd results
-    for F in $WORK_DIR/urqmd/*.f13.gz; do
+    for F in $WORK_DIR/results/*; do
       globus-url-copy -v -create-dest -notpt -nodcau \
                       file://$F \
                       $DEST_URL/$RUN_ID/$JOB_ID.`basename $F` \

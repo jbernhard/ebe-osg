@@ -167,7 +167,7 @@ for (( i=0; i<$nev; i++ )); do
   msg2 "file has $nlines lines"
   if [[ $nlines == $[$nparticles+16] ]]; then
     msg2 'verified, compressing output'
-    gzip -v $ftn13
+    gzip -vc $ftn13 > ../results/$ftn13.gz
     nsuccess=$[$nsuccess+1]
   else
     warning 'failed integrity check, skipping to next event'
