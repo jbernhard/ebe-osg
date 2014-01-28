@@ -94,7 +94,7 @@ fi
 TOP_DIR=$PWD
 
 # gridftp source location
-SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
+SRC_URL="gsiftp://${HOSTNAME}${TOP_DIR}"
 
 
 
@@ -130,9 +130,6 @@ universe = vanilla
 x509userproxy = /tmp/x509up_u$USER_ID
 
 # requirements is an expression to specify machines that can run jobs
-#requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && !regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-#requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-#requirements = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
 requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
 
 # release held jobs after a while
