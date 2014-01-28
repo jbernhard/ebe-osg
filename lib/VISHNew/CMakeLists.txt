@@ -5,4 +5,6 @@ add_subdirectory (src)
 
 # install dependencies
 install (FILES Vishydro.inp extraParas.inp DESTINATION ${PROJECT_NAME})
-install (DIRECTORY EOS Initial results DESTINATION ${PROJECT_NAME})
+install (DIRECTORY EOS DESTINATION ${PROJECT_NAME} FILES_MATCHING PATTERN "*.dat")
+install (DIRECTORY DESTINATION ${PROJECT_NAME}/Initial)
+install (DIRECTORY DESTINATION ${PROJECT_NAME}/results)

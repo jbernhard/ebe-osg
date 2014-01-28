@@ -58,9 +58,17 @@ add_subdirectory (urqmd)
 # install run script and dependency
 install (PROGRAMS run-ebe DESTINATION .)
 install (FILES msg DESTINATION .)
+install (DIRECTORY DESTINATION results)
+
+#file (MAKE_DIRECTORY results)
+#file (WRITE ${PROJECT_BINARY_DIR}/.empty "")
+#install (FILES ${PROJECT_BINARY_DIR}/.empty DESTINATION results)
+#install (CODE "FILE(WRITE ${CPACK_PACKAGING_INSTALL_PREFIX}/results/.empty '')")
+#INSTALL(CODE "FILE(WRITE \${ENV}\${CMAKE_INSTALL_PREFIX}/results/.empty)")
+#install (DIRECTORY DESTINATION results)
 
 # package options
-set (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
-set (CPACK_GENERATOR "TGZ")
-set (CPACK_INCLUDE_TOPLEVEL_DIRECTORY FALSE)
-include (CPack)
+#set (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
+#set (CPACK_GENERATOR "TGZ")
+#set (CPACK_INCLUDE_TOPLEVEL_DIRECTORY FALSE)
+#include (CPack)
