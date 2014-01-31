@@ -143,7 +143,12 @@ text.  Therefore, please use a unique password and change the permissions of the
 This system is very robust, and you should have near-perfect reliability.  I typically see >99.9% success rate.
 
 Feel free to load up the queue with many thousands of jobs.  I routinely keep 30-50 thousand jobs in the queue, and 5-10 thousand are
-running at any given time.
+running at any given time.  I like to use shell loops to submit many batches, e.g.
+
+    for i in list_of_input_files;
+        do ./submit 1000 i
+        sleep 2
+    done
 
 If possible, try to tune your jobs to take about 2-4 hours.  Shorter jobs are inefficient because it takes some time for Condor to match
 your jobs and transfer the files.  Longer jobs will have other problems, such as preemption by higher-priority tasks.  I tune my job time by
