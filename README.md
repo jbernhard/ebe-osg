@@ -111,6 +111,7 @@ intervention.  You might want to use my script `run-ebe` as a starting point, or
 * The script must be named `run-ebe`, since it is hard-coded in several other places.
 * Results files must be placed in a folder `results`.  This folder is created by CMake in the packaging process.  When jobs run on the grid,
   the remote-job-wrapper copies all files in that folder; anything else will be lost.
+* Anything printed to stdout/err will be recorded in the job log file.
 
 ### Compile and package
 
