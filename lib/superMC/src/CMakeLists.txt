@@ -20,7 +20,7 @@ add_executable(${PROJECT_NAME}
   Table.cpp
   )
 
-# require GSL
+# link to GSL
 target_link_libraries(${PROJECT_NAME} ${GSL_LIBRARIES})
 
 # install compiled binary

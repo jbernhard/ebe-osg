@@ -12,6 +12,5 @@ add_subdirectory (src)
 
 # install dependencies
 install (FILES parameters.dat DESTINATION ${PROJECT_NAME})
-#install (DIRECTORY data s95p-PCE DESTINATION ${PROJECT_NAME} FILES_MATCHING PATTERN "*.dat")
 install (DIRECTORY s95p-PCE DESTINATION ${PROJECT_NAME} FILES_MATCHING PATTERN "*.dat")
 install (DIRECTORY DESTINATION ${PROJECT_NAME}/data)
