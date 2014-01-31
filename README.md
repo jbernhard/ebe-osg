@@ -145,8 +145,8 @@ This system is very robust, and you should have near-perfect reliability.  I typ
 Feel free to load up the queue with many thousands of jobs.  I routinely keep 30-50 thousand jobs in the queue, and 5-10 thousand are
 running at any given time.  I like to use shell loops to submit many batches, e.g.
 
-    for i in list_of_input_files;
-        do ./submit 1000 i
+    for i in list_of_input_files; do
+        ./submit 1000 $i
         sleep 2
     done
 
