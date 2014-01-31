@@ -133,6 +133,10 @@ Once that is working, test some jobs on the grid, e.g. `./submit 10`.
 
 If everything is working, you can start submitting larger batches of jobs.  I recommend configuring your input files at this point.
 
+For convenience, you may place your grid password in the file `.vomspw` in ebe-osg root.  The submit script will read the file so you don't
+have to type your password every time you submit a job.  Obviously, there is a significant security risk when storing a password in plain
+text.  Therefore, please use a unique password and change the permissions of the file to only be readable by you (chmod 600).
+
 ### Optimization
 
 This system is very robust, and you should have near-perfect reliability.  I typically see >99.9% success rate.
@@ -156,7 +160,7 @@ Unfortunately there are far too many possible problems for me to address them al
 * The first thing to check is the stdout/stderr Condor logs.
 * GridFTP is a common problem.  If you are getting errors from globus-url-copy, try a manual test transfer, e.g.
 
-    globus-url-copy -v file:///full/path/to/testfile gsiftp://your.gridftp.server/full/destination/path/to/testfile
+        globus-url-copy -v file:///full/path/to/testfile gsiftp://your.gridftp.server/full/destination/path/to/testfile
 
 * A useful trick is `condor_ssh_to_job <job ID>`, where the job ID can be found in `condor_q` output.  This will ssh to the computer where
   your job is actually running, so you can check on the status in real time.
