@@ -84,7 +84,8 @@ GridFTP proxy with `voms-proxy-init`.
 
 ### Clone the source
 
-On the OSG host:  `git clone https://github.com/jbernhard/ebe-osg.git`
+On the OSG host:  `git clone https://github.com/jbernhard/ebe-osg.git`.  Note that the master branch has an older version of UrQMD.  If you
+want the current version, checkout the new\_urqmd branch:  `git checkout --track origin/new_urqmd`.
 
 ### Edit the submit script
 
