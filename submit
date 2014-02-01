@@ -8,16 +8,36 @@ set -e
 #
 
 # max run time (seconds)
-# jobs that run longer than this are restarted
+# jobs that run longer than this are placed on hold and subsequently restarted
+# set this to a time somewhat longer than a job could reasonably run
+# i.e. if it gets here, something must have gone wrong
 MAX_WALL_TIME=21600   # 6 hours
 
-# megabytes
-MEMORY_REQUIREMENT=1024
+# maximum number of times to retry a job
+MAX_RETRIES=10
+
+# minimum memory in megabytes
+# this is RAM, not disk space
+# every machine has at least a few gigabytes
+MIN_MEMORY=1024
 
 # gridftp destination
 # files will be placed in "$DEST_URL/$RUN_ID"
-# take value from environment or fall back to default
-DEST_URL=${DEST_URL:-gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-osg-events}
+# this will copy files to nukeserv at Duke
+# if your username is not the same on OSG as at Duke, you must enter your Duke username manually
+# you must give your grid certificate [the output of voms-proxy-info] to Jimmy so he can add it to the Duke gridftp keychain
+DEST_URL="gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-osg-events"
+# alternatively, you may copy results back to the submit host
+#DEST_URL="gsiftp://${HOSTNAME}/path/to/results/folder"
+
+# your OSG project name
+OSG_PROJECT_NAME="Duke-QGP"
+
+# Condor log files will be placed here
+# if you are running many jobs, this can quickly become very large
+# choose a location in e.g. scratch space
+# these files are only for debugging and need not be retained permanently
+LOG_DIR="/local-scratch/$USER/ebe-osg-logs"
 
 
 #
@@ -36,16 +56,15 @@ msg 'EbE-OSG job generator and submitter'
 # otherwise print usage information
 if ! (( $1 > 0 )) 2> /dev/null; then
   cat <<EOF
-usage:  $0 number_of_jobs [input_files ...]
+Usage:  $0 number_of_jobs [input_files ...]
 
-required:
+Generate and submit jobs to the OSG.
+
+Required argument:
   number_of_jobs = positive integer
 
-optional:
+Optional arguments:
   input_files = relative path[s] to input file[s]
-
-The GridFTP destination may be overriden by setting it as an environment variable.  The current value is
-  DEST_URL=$DEST_URL
 
 This script automatically creates a new voms-proxy if necessary.  For convenience, the password will be read
 from the file $PW_FILE in this directory.  If the file is not present, the password will be requested normally.
@@ -91,7 +110,7 @@ fi
 TOP_DIR=$PWD
 
 # gridftp source location
-SRC_URL=gsiftp://`hostname -f`"$TOP_DIR"
+SRC_URL="gsiftp://${HOSTNAME}${TOP_DIR}"
 
 
 
@@ -107,7 +126,7 @@ RUN_ID="`/bin/date +'%F_%H%M%S'`_${NUM_RUNS}jobs${INPUT_FILES_JOINED}"
 msg2 "run ID:  $RUN_ID"
 
 # create run dir and subfolders
-RUN_DIR=$TOP_DIR/runs/$RUN_ID
+RUN_DIR=$LOG_DIR/$RUN_ID
 mkdir -p $RUN_DIR/{condor,stdouterr,dag}
 touch $RUN_DIR/alljobs.log
 chmod 644 $RUN_DIR/alljobs.log
@@ -120,26 +139,14 @@ for (( JOB_ID=0; JOB_ID<$NUM_RUNS; JOB_ID++ )); do
   cat > condor/$JOB_ID <<EOF
 universe = vanilla
 
-# OSG project name
-+ProjectName = "Duke-QGP"
++ProjectName = "$OSG_PROJECT_NAME"
 
-# grid proxy
 x509userproxy = /tmp/x509up_u$USER_ID
 
-# requirements is an expression to specify machines that can run jobs
-#requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && !regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-#requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" ) && regexp("acas[0-9]+.usatlas.bnl.gov", Machine)
-#requirements = ( GLIDEIN_Max_Walltime >= $MAX_WALL_TIME && Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
-requirements = ( Memory >= $MEMORY_REQUIREMENT && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+requirements = ( Memory >= $MIN_MEMORY && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
 
-# release held jobs after a while
-# retry several times
-periodic_release = ((CurrentTime - EnteredCurrentStatus) > 600) && (NumJobStarts <= 10)
-
-# protect against hung jobs
+periodic_release = ((CurrentTime - EnteredCurrentStatus) > 600) && (NumJobStarts <= $MAX_RETRIES)
 periodic_hold = (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
-
-# stay in queue on failures
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 
 executable = $TOP_DIR/lib/remote-job-wrapper

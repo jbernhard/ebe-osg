@@ -8,7 +8,7 @@ elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
 
 
-add_executable(${LOCAL_NAME}
+add_executable(${PROJECT_NAME}
   1fluid.f
   addpart.f
   angdis.f
@@ -52,11 +52,5 @@ add_executable(${LOCAL_NAME}
   )
 
 
-# suppress warnings if requested
-if (QUIET)
-  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w")
-endif (QUIET)
-
-
 # install compiled binary
-install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
+install (TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_NAME})

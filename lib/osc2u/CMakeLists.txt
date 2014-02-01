@@ -1,3 +1,4 @@
-set (LOCAL_NAME osc2u)
+cmake_minimum_required (VERSION 2.6)
+project (osc2u Fortran)
 
 add_subdirectory (src)

@@ -1,4 +1,4 @@
-add_executable(${LOCAL_NAME}
+add_executable(${PROJECT_NAME}
   main.cpp
   Bases.cpp
   MCnucl.cpp
@@ -20,8 +20,8 @@ add_executable(${LOCAL_NAME}
   Table.cpp
   )
 
-# require GSL
-target_link_libraries(${LOCAL_NAME} ${GSL_LIBRARIES})
+# link to GSL
+target_link_libraries(${PROJECT_NAME} ${GSL_LIBRARIES})
 
 # install compiled binary
-install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
+install (TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_NAME})

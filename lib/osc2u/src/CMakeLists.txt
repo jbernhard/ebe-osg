@@ -1,4 +1,4 @@
-add_executable(${LOCAL_NAME}
+add_executable(${PROJECT_NAME}
   osc2u.f
   pdg2ityp.f
   vni_procev.f
@@ -8,4 +8,4 @@ add_executable(${LOCAL_NAME}
   )
 
 # install compiled binary
-install (TARGETS ${LOCAL_NAME} DESTINATION ${LOCAL_NAME})
+install (TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_NAME})
