@@ -40,6 +40,7 @@ endif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 # list the projects which you wish to compile
 # each add_subdirectory command must point to a path containing a valid CMake project
 # the paths may be absolute or relative and need not be within the ebe-osg tree
+# run 'cmake --help-command add_subdirectory' for more information
 add_subdirectory (superMC)
 add_subdirectory (VISHNew)
 add_subdirectory (iSS)
