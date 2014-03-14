@@ -17,9 +17,14 @@ A comprehensive, hold-your-hand solution.
 
 ### Who would want to use it?
 
-Experts who want to acquire as much CPU time as possible and are willing to put in some time to configure this.  If you want to set
-something up quickly and run a few jobs, this is not for you.
+Experts who want to acquire as much CPU time as possible and are willing to put in some time to configure this.  I imagine three possible
+use cases:
 
+1. Running events using the same physics models as me.
+2. Using some of the same models, replacing some with your own.  I expect this is the most common.
+3. Completely different models, i.e. you just want my OSG scripts.
+
+I will address all three use cases below.
 
 
 ## Design
@@ -73,18 +78,50 @@ My input files are in the `inputs` subdirectory.
 
 The script `lib/run-ebe` handles the input files and couples the various programs together.  The remote job wrapper calls `run-ebe`.
 
+__Example:__  There is a file `inputs/test` in this repository that contains settings for a test event.  Suppose you want to run 10 test
+events; you would execute
+
+    ./submit 10 input/test
+
+This generates 10 Condor jobs and submits them.  Each Condor job passes the name of the input file to `remote-job-wrapper`, i.e.
+
+    ./remote-job-wrapper inputs/test
+
+This is the command that is automatically executed on each OSG machine.  The remote job wrapper then passes the input file to `run-ebe`
+
+    ./run-ebe test
+
+The actual handling of the input file occurs entirely in `run-ebe`.  The submit script and remote job wrapper are completely agnostic to the
+contents of the input files.
+
 
 
 ## Configuration
 
 ### Get an OSG account
 
-You must be able to SSH into an OSG submit host (e.g. Xsede or Engage) before doing anything.  Please also ensure that you can create a
-GridFTP proxy with `voms-proxy-init`.
+You must be able to SSH into an OSG submit host (e.g. xsede) before doing anything.
 
-### Clone the source
+You must have a valid grid certificate to submit jobs.  Go to https://oim.grid.iu.edu/oim/certificate to request a certificate (click
+request new under user certificates on the left).  Once your certificate is approved, you will return to that site and can download the
+certificate.  Look for an obvious download button, and choose the option for command-line use.  Your browser will download a file
+like `user_certificate_and_key.Uxxx.p12`.  There should also be a link, how to import user certificate for command line use.  It will tell you
+exactly what commands to run.  In the interest of being thorough, I reproduce those commands here:
 
-On the OSG host:  `git clone https://github.com/jbernhard/ebe-osg.git`
+    openssl pkcs12 -in user_certificate_and_key.Uxxx.p12 -clcerts -nokeys -out ~/.globus/usercert.pem
+    openssl pkcs12 -in user_certificate_and_key.Uxxx.p12 -nocerts -out ~/.globus/userkey.pem
+
+You must set the mode on your `userkey.pem` file to read/write only by the owner (`chmod 600 ~/.globus/userkey.pem`).
+
+Now, verify that you can create a GridFTP proxy with `voms-proxy-init`.
+
+### Get the source
+
+What you do here depends on your use case.
+
+1. If you want to use the same physics models as me, simply clone this repository on the OSG host `git clone https://github.com/jbernhard/ebe-osg.git`.
+2. If you plan to add/remove physics models or make other significant changes, __fork the repository__ and then clone your fork.
+3. If all you want are my OSG scripts, just download `submit` and `remote-job-wrapper`.
 
 ### Edit the submit script
 
@@ -92,16 +129,20 @@ Customize the variables at the top of the submit script.  Documentation is prese
 
 ### Run a test job
 
-I strongly recommend running a test job at this point.  First, compile the package:  cd into the `lib` directory and run `./package`.  This
-should create an archive `ebe-osg.tar.gz`.  Now, go back up and run `./submit 10 inputs/test`.
+I strongly recommend running a test job at this point.  __Please verify that you can voms-proxy-init before attempting this.__
+
+First, compile the package:  cd into the `lib` directory and run `./package`.  This should create an archive `ebe-osg.tar.gz`.  Now, go back
+up and run `./submit 10 inputs/test`.
 
 Check the status of your jobs with `condor_q <user>`.  Jobs should finish in 5-10 minutes and the results will be placed in the location you
 specified in the submit script.
 
+If you are in use case 1, no more configuration is necessary.  You can skip the rest of this section.
+
 ### Add your projects
 
-Presumably you want to use some of your own code.  Anything that is configured for compiling with CMake should work well.
-Edit `lib/CMakeLists.txt`, specifically the part about adding subprojects and possibly the compiler flags.  Documentation is in the file.
+Anything that is configured for compiling with CMake should work well.  Edit `lib/CMakeLists.txt`, specifically the part about adding
+subprojects and possibly the compiler flags.  Documentation is in the file.
 
 ### Edit the run script
 
@@ -112,6 +153,9 @@ intervention.  You might want to use my script `run-ebe` as a starting point, or
 * Results files must be placed in a folder `results`.  This folder is created by CMake in the packaging process.  When jobs run on the grid,
   the remote-job-wrapper copies all files in that folder; anything else will be lost.
 * Anything printed to stdout/err will be recorded in the job log file.
+* The run script is entirely responsible for handling the input files.  In my version, input files are parsed in INI format.
+* The script is _not designed to run in place_, i.e. if you go into lib and do `./run-ebe`, it will not work at all.  It is designed to run
+as part of the full OSG package.
 
 ### Compile and package
 
@@ -126,17 +170,19 @@ recompile code.
 ### Test first
 
 I suggest running a local test job before attempting to use the grid.  Copy the package to a temporary directory, unpack it, and execute
-`./run-ebe`.
+`./run-ebe`.  Try to tune your test job to run as quickly as possible -- xsede will kill CPU-intensive processes that run for more than 20
+minutes.
 
-Once that is working, test some jobs on the grid, e.g. `./submit 10`.
+Once that is working, test some jobs on the grid, e.g. `./submit 10 <input files>`.
 
 ### Scale up
 
-If everything is working, you can start submitting larger batches of jobs.  I recommend configuring your input files at this point.
+If everything is working, you can start submitting larger batches of jobs.
 
-For convenience, you may place your grid password in the file `.vomspw` in ebe-osg root.  The submit script will read the file so you don't
-have to type your password every time you submit a job.  Obviously, there is a significant security risk when storing a password in plain
-text.  Therefore, please use a unique password and change the permissions of the file to only be readable by you (chmod 600).
+__Password automation:__ For convenience, you may place your grid password in the file `.vomspw` in ebe-osg root.  The submit script will
+read the file so you don't have to type your password every time you submit a job.  Obviously, there is a significant security risk when
+storing a password in plain text.  Therefore, please use a unique password and change the permissions of the file to only be readable by you
+(chmod 600).
 
 ### Optimization
 
