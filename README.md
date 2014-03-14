@@ -123,6 +123,8 @@ What you do here depends on your use case.
 2. If you plan to add/remove physics models or make other significant changes, __fork the repository__ and then clone your fork.
 3. If all you want are my OSG scripts, just download `submit` and `remote-job-wrapper`.
 
+Note that the master branch has an older version of UrQMD.  If you want the current version, checkout the new\_urqmd branch:  `git checkout --track origin/new_urqmd`.
+
 ### Edit the submit script
 
 Customize the variables at the top of the submit script.  Documentation is present in the file.
