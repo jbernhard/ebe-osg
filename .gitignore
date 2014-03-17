@@ -6,3 +6,6 @@ batch-submit
 
 # CMake build directory
 lib/build/
+
+# OSG package
+lib/ebe-osg.tar.gz
