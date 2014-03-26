@@ -5,14 +5,14 @@
 # startup
 #
 
-
-# output functions
+# load output functions
 source msg
 
-# parses standard .ini config files
-# returns key=value pairs for the desired section
-# $1 = filename
-# $2 = section
+# parses standard INI config files
+# returns key = value pairs for the desired section
+# arguments:
+#   $1 = filename
+#   $2 = section
 parse_ini () {
   sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
     -e 's/;.*$//' \
@@ -23,23 +23,13 @@ parse_ini () {
 }
 
 
-
-
-msg 'starting event[s]...'
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# read parameters from input files
+# read input files
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
-
-echo
 msg 'reading input files'
 
-# init. arrays to hold superMC, VISHNew, iSS settings
+# arrays to hold superMC, VISHNew, iSS settings
 smc=()
 vsn=()
 iss=()
@@ -54,22 +44,19 @@ for file in $@; do
   iss=(${iss[@]} $(parse_ini $file 'iSS'))
 done
 
-
-echo
+# output settings for reference
 msg 'detected settings'
 msg2 "superMC:  ${smc[*]}"
 msg2 "VISHNew:  ${vsn[*]}"
 msg2 "iSS:      ${iss[*]}"
 
 
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# event-by-event
+# run events
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
+msg 'starting event[s]...'
 
 echo
 msg 'generating initial condition[s]'
@@ -144,7 +131,6 @@ for (( i=0; i<$nev; i++ )); do
   echo
   msg 'moving osc2u fortran output for input to UrQMD'
   mv -v osc2u/fort.14 urqmd/initial.f14ex
-
 
 
   echo

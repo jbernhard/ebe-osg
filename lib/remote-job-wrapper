@@ -77,11 +77,11 @@ function stage_out()
 
     # log file
     globus-url-copy -v -create-dest -notpt -nodcau \
-                    file://$WORK_DIR/eventslog \
+                    file://$WORK_DIR/ebe-osg.log \
                     $DEST_URL/$RUN_ID/$JOB_ID.log \
                     || return 1
 
-    # urqmd results
+    # results
     for F in $WORK_DIR/results/*; do
       globus-url-copy -v -create-dest -notpt -nodcau \
                       file://$F \
@@ -102,18 +102,19 @@ function run_model()
     source msg
 
     # identifier in the output file
-    msg 'event-by-event OSG remote-job-wrapper' > eventslog
-    msg2 "run_id:  $RUN_ID" >> eventslog
-    msg2 "job_id:  $JOB_ID" >> eventslog
-    echo >> eventslog
+    msg 'event-by-event OSG remote-job-wrapper' > ebe-osg.log
+    msg2 "run_id:  $RUN_ID" >> ebe-osg.log
+    msg2 "job_id:  $JOB_ID" >> ebe-osg.log
+    echo >> ebe-osg.log
 
     # do it
-    time ( ./run-ebe `for F in ${INPUT_FILES[@]}; do basename $F; done` ) >> eventslog 2>&1
+    args=($(basename -a ${INPUT_FILES[@]}))
+    { time  ./run-ebe $args } >> ebe-osg.log 2>&1
     EXIT_CODE=$?
     
     # if failure, put the last lines on stdout - useful for debugging
     if [ "x$EXIT_CODE" != "x0" ]; then
-        tail -n 500 eventslog
+        tail -n 500 ebe-osg.log
     fi
 
     return $EXIT_CODE
@@ -157,6 +158,6 @@ WORK_DIR=`pwd`
 # is it also very important to do the cleanup in case of failure
 trap cleanup 1 2 3 6
 
-(stage_in && run_model $RUN_ID $JOB_ID && stage_out)
+stage_in && run_model && stage_out
 
 exit $?
