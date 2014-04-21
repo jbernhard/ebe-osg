@@ -84,7 +84,8 @@ set.seed(314159)
 
 D <- 5
 #N <- 20*D
-N <- 256
+#N <- 256
+N <- 64
 
 X.scale <- maximinLHS(n=N, k=D)
 X.order <- CHD(X.all=X.scale, N=N)
@@ -94,7 +95,7 @@ X <- scaleto.mM(X=X.order, M=M)
 X <- data.frame(X)
 names(X) <- c("superMC.finalFactor","superMC.alpha","VISHNew.T0","VISHNew.ViscousC","VISHNew.VisBeta")
 
-write.table( x=X, file=paste0('lhs-design-glb-',N,'.dat'),
+write.table( x=X, file=paste0('lhs-design-glb-validation-',N,'.dat'),
              append=FALSE, sep=" ",
              row.names=FALSE, col.names = TRUE )
 
