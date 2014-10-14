@@ -13,6 +13,16 @@ project (ebe-osg CXX Fortran)
 set (CMAKE_CXX_FLAGS_OSG "${CMAKE_CXX_FLAGS_RELEASE} -static")
 set (CMAKE_Fortran_FLAGS_OSG "${CMAKE_Fortran_FLAGS_RELEASE} -static")
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "OSG")
+  unset (CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
+  #unset (CMAKE_SHARED_LIBRARY_Fortran_FLAGS)
+  #unset (CMAKE_SHARED_LIBRARY_CREATE_Fortran_FLAGS)
+  unset (CMAKE_SHARED_LIBRARY_LINK_Fortran_FLAGS)
+  #unset (CMAKE_SHARED_LIBRARY_RUNTIME_Fortran_FLAG)
+  #unset (CMAKE_SHARED_LIBRARY_RUNTIME_Fortran_FLAG_SEP)
+  #unset (CMAKE_SHARED_LIBRARY_SONAME_Fortran_FLAG)
+endif (${CMAKE_BUILD_TYPE} STREQUAL "OSG")
+
 # additional flags for Intel compilers
 # the Intel compilers can generate multiple binaries for different CPUs and store them in the same file
 # the correct binary will then be chosen at runtime
