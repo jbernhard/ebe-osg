@@ -52,21 +52,42 @@ function stage_in()
 {
     cd $WORK_DIR
 
-    # EbE package
-    globus-url-copy -v -notpt -nodcau \
-                    $SRC_URL/lib/ebe-osg.tar.gz \
-                    file://$WORK_DIR/ebe-osg.tar.gz \
-                    || return 1
+    ## EbE package
+    #globus-url-copy -v -notpt -nodcau \
+    #                $SRC_URL/lib/ebe-osg.tar.gz \
+    #                file://$WORK_DIR/ebe-osg.tar.gz \
+    #                || return 1
 
-    # input files
-    for F in ${INPUT_FILES[@]}; do
-      globus-url-copy -v -notpt -nodcau \
-                      $SRC_URL/$F \
-                      file://$WORK_DIR/`basename $F` \
-                      || return 1
+    ## input files
+    #for F in ${INPUT_FILES[@]}; do
+    #  globus-url-copy -v -notpt -nodcau \
+    #                  $SRC_URL/$F \
+    #                  file://$WORK_DIR/`basename $F` \
+    #                  || return 1
+    #done
+
+    #return 0
+
+    for i in lib/ebe-osg.tar.gz ${INPUT_FILES[@]}; do
+      globus-url-copy \
+        -verbose \
+        -create-dest \
+        -restart \
+        -rst-retries 5 \
+        -rst-interval 30 \
+        -rst-timeout 30 \
+        $SRC_URL/$i $(basename $i) || \
+      globus-url-copy \
+        -verbose \
+        -create-dest \
+        -restart \
+        -rst-retries 5 \
+        -rst-interval 30 \
+        -rst-timeout 30 \
+        -no-data-channel-authentication \
+        -no-third-party-transfers \
+        $SRC_URL/$i $(basename $i) || return 1
     done
-
-    return 0
 }
 
 
@@ -75,21 +96,48 @@ function stage_out()
 {
     cd $WORK_DIR
 
-    # log file
-    globus-url-copy -v -create-dest -notpt -nodcau \
-                    file://$WORK_DIR/eventslog \
-                    $DEST_URL/$RUN_ID/$JOB_ID.log \
-                    || return 1
+    ## log file
+    #globus-url-copy -v -create-dest -notpt -nodcau \
+    #                file://$WORK_DIR/eventslog \
+    #                $DEST_URL/$RUN_ID/$JOB_ID.log \
+    #                || return 1
 
-    # urqmd results
-    for F in $WORK_DIR/results/*; do
-      globus-url-copy -v -create-dest -notpt -nodcau \
-                      file://$F \
-                      $DEST_URL/$RUN_ID/$JOB_ID.`basename $F` \
-                      || return 1
+    ## urqmd results
+    #for F in $WORK_DIR/results/*; do
+    #  globus-url-copy -v -create-dest -notpt -nodcau \
+    #                  file://$F \
+    #                  $DEST_URL/$RUN_ID/$JOB_ID.`basename $F` \
+    #                  || return 1
+    #done
+
+    #return 0
+    mv eventslog results/log
+    cd results
+    for i in *; do
+      mv $i ${JOB_ID}.${i}
     done
 
-    return 0
+    dest="$DEST_URL/$RUN_ID"
+
+    globus-url-copy \
+      -verbose \
+      -create-dest \
+      -parallel 4 \
+      -restart \
+      -rst-retries 5 \
+      -rst-interval 30 \
+      -rst-timeout 30 \
+      '*' $dest/ || \
+    globus-url-copy \
+      -verbose \
+      -create-dest \
+      -restart \
+      -rst-retries 5 \
+      -rst-interval 30 \
+      -rst-timeout 30 \
+      -no-data-channel-authentication \
+      -no-third-party-transfers \
+      '*' $dest/ || return 1
 }
 
 
