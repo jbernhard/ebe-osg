@@ -153,7 +153,9 @@ executable = $TOP_DIR/lib/remote-job-wrapper
 arguments = $RUN_ID $JOB_ID $SRC_URL $DEST_URL ${INPUT_FILES[@]}
 
 should_transfer_files = YES
-when_to_transfer_output = ON_EXIT
+#when_to_transfer_output = ON_EXIT
+#transfer_output_files =
++TransferOutput = ""
 
 output = stdouterr/$JOB_ID.out
 error = stdouterr/$JOB_ID.err
