@@ -29,17 +29,7 @@ EOF
 # settings
 #
 
-# hostnames of OSG machines
-XSEDE='osg-xsede.grid.iu.edu'
-ENGAGE='engage-submit3.renci.org'
-
-# CMake build type
-if [[ $HOSTNAME == $XSEDE || $HOSTNAME == $ENGAGE ]]; then
-  BUILD_TYPE='OSG'
-else
-  BUILD_TYPE='Release'
-fi
-
+BUILD_TYPE='OSG'
 CLEAR=false
 
 
@@ -81,13 +71,8 @@ done
 #
 
 # try to load Intel compilers on OSG hosts
-if [[ $HOSTNAME == $XSEDE ]]; then
-  . /etc/profile.modules
-  module load intel/12.1
-elif [[ $HOSTNAME == $ENGAGE ]]; then
-  . /etc/profile.d/module.sh
-  module load intel{c,f}/11.1_072
-fi
+. /etc/profile.d/modules.sh
+module load intel
 
 # use Intel compilers if available
 # CMake will read these environment vars.
