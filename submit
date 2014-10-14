@@ -26,7 +26,7 @@ MIN_MEMORY=1024
 # this will copy files to nukeserv at Duke
 # if your username is not the same on OSG as at Duke, you must enter your Duke username manually
 # you must give your grid certificate [the output of voms-proxy-info] to Jimmy so he can add it to the Duke gridftp keychain
-DEST_URL="gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe-osg-events"
+DEST_URL="gsiftp://ntheoryfs01.phy.duke.edu/var/phy/project/nukeserv/$USER/ebe/osg-staging"
 # alternatively, you may copy results back to the submit host
 #DEST_URL="gsiftp://${HOSTNAME}/path/to/results/folder"
 
