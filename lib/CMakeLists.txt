@@ -30,7 +30,7 @@ endif (${CMAKE_BUILD_TYPE} STREQUAL "OSG")
 # the -m option generates a fallback for generic CPUs with SSE2 support
 # this appears to work with every CPU on the OSG
 # the remaining flags are suggested by the Intel docs for performance
-set (INTEL_FLAGS "-axsse4.2,sse4.1 -msse2 -ipo -no-prec-div")
+set (INTEL_FLAGS "-axsse4.2,sse4.1 -msse2 -ipo -ipo-jobs8 -no-prec-div")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
   set (CMAKE_CXX_FLAGS_OSG "${CMAKE_CXX_FLAGS_OSG} ${INTEL_FLAGS}")
