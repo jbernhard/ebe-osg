@@ -143,7 +143,8 @@ universe = vanilla
 
 x509userproxy = /tmp/x509up_u$USER_ID
 
-requirements = ( Memory >= $MIN_MEMORY && OpSys == "LINUX" ) && ( Arch == "INTEL" || Arch == "X86_64" )
+requirements = OpSys == "LINUX" && ( Arch == "INTEL" || Arch == "X86_64" )
+request_memory = $MIN_MEMORY
 
 periodic_release = ((CurrentTime - EnteredCurrentStatus) > 600) && (NumJobStarts <= $MAX_RETRIES)
 periodic_hold = (JobStatus==2) && ((CurrentTime - EnteredCurrentStatus) > ($MAX_WALL_TIME))
