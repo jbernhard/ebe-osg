@@ -1,210 +1,65 @@
 #!/bin/bash
 
-# provide some information about the host we are running on
-function host_info()
-{
-    echo 
-    echo "Running on" `hostname -f` "($OSG_SITE_NAME)"
-
-    echo
-    echo "uname -a"
-    uname -a
-
-    echo
-    echo -n "OS: "
-    if [ -e /etc/redhat-release ]; then
-        echo "RedHat (maybe derivative)"
-        cat /etc/redhat-release
-    else
-        if [ -e /etc/debian_version ]; then
-            echo "Debian"
-            cat /etc/debian_version
-        else
-            echo "Unknown"
-        fi
-    fi
-
-    echo
-    echo "ulimit -a"
-    ulimit -a
-
-    echo
-    echo "/usr/bin/env"
-    /usr/bin/env
-    
-    echo
-    echo "cat /proc/cpuinfo"
-    cat /proc/cpuinfo
-    
-    echo
-    echo "cat /proc/meminfo"
-    cat /proc/meminfo
-
-    echo
-    echo "---------------------------------------------------"
-    echo
-}
-
-
-
-# use gridftp to stage in model and inputs
-function stage_in()
-{
-    cd $WORK_DIR
-
-    ## EbE package
-    #globus-url-copy -v -notpt -nodcau \
-    #                $SRC_URL/lib/ebe-osg.tar.gz \
-    #                file://$WORK_DIR/ebe-osg.tar.gz \
-    #                || return 1
-
-    ## input files
-    #for F in ${INPUT_FILES[@]}; do
-    #  globus-url-copy -v -notpt -nodcau \
-    #                  $SRC_URL/$F \
-    #                  file://$WORK_DIR/`basename $F` \
-    #                  || return 1
-    #done
-
-    #return 0
-
-    for i in lib/ebe-osg.tar.gz ${INPUT_FILES[@]}; do
-      globus-url-copy \
-        -verbose \
-        -create-dest \
-        -restart \
-        -rst-retries 5 \
-        -rst-interval 30 \
-        -rst-timeout 30 \
-        $SRC_URL/$i $(basename $i) || \
-      globus-url-copy \
-        -verbose \
-        -create-dest \
-        -restart \
-        -rst-retries 5 \
-        -rst-interval 30 \
-        -rst-timeout 30 \
-        -no-data-channel-authentication \
-        -no-third-party-transfers \
-        $SRC_URL/$i $(basename $i) || return 1
-    done
-}
-
-
-# use gridftp to stage out results
-function stage_out()
-{
-    cd $WORK_DIR
-
-    ## log file
-    #globus-url-copy -v -create-dest -notpt -nodcau \
-    #                file://$WORK_DIR/eventslog \
-    #                $DEST_URL/$RUN_ID/$JOB_ID.log \
-    #                || return 1
-
-    ## urqmd results
-    #for F in $WORK_DIR/results/*; do
-    #  globus-url-copy -v -create-dest -notpt -nodcau \
-    #                  file://$F \
-    #                  $DEST_URL/$RUN_ID/$JOB_ID.`basename $F` \
-    #                  || return 1
-    #done
-
-    #return 0
-    mv eventslog results/log
-    cd results
-    for i in *; do
-      mv $i ${JOB_ID}.${i}
-    done
-
-    dest="$DEST_URL/$RUN_ID"
-
-    globus-url-copy \
-      -verbose \
-      -create-dest \
-      -parallel 4 \
-      -restart \
-      -rst-retries 5 \
-      -rst-interval 30 \
-      -rst-timeout 30 \
-      '*' $dest/ || \
-    globus-url-copy \
-      -verbose \
-      -create-dest \
-      -restart \
-      -rst-retries 5 \
-      -rst-interval 30 \
-      -rst-timeout 30 \
-      -no-data-channel-authentication \
-      -no-third-party-transfers \
-      '*' $dest/ || return 1
-}
-
-
-# execute the model
-function run_model()
-{
-    cd $WORK_DIR
-
-    tar xzf ebe-osg.tar.gz
-    source msg
-
-    # identifier in the output file
-    msg 'event-by-event OSG remote-job-wrapper' > eventslog
-    msg2 "run_id:  $RUN_ID" >> eventslog
-    msg2 "job_id:  $JOB_ID" >> eventslog
-    echo >> eventslog
-
-    # do it
-    time ( ./run-ebe `for F in ${INPUT_FILES[@]}; do basename $F; done` ) >> eventslog 2>&1
-    EXIT_CODE=$?
-    
-    # if failure, put the last lines on stdout - useful for debugging
-    if [ "x$EXIT_CODE" != "x0" ]; then
-        tail -n 500 eventslog
-    fi
-
-    return $EXIT_CODE
-}
-
-
-# run id is the first argument
 RUN_ID=$1
-
-# job id is the second argument
 JOB_ID=$2
-
-# gridftp URLs
 SRC_URL=$3
 DEST_URL=$4
 
-# input files
 shift 4
 INPUT_FILES=$@
 
-# keep the exit code to the end
-EXIT_CODE=1
+for i in lib/ebe-osg.tar.gz ${INPUT_FILES[@]}; do
+  globus-url-copy \
+    -verbose \
+    -create-dest \
+    -restart \
+    -rst-retries 5 \
+    -rst-interval 30 \
+    -rst-timeout 30 \
+    $SRC_URL/$i $(basename $i) || \
+  globus-url-copy \
+    -verbose \
+    -create-dest \
+    -restart \
+    -rst-retries 5 \
+    -rst-interval 30 \
+    -rst-timeout 30 \
+    -no-data-channel-authentication \
+    -no-third-party-transfers \
+    $SRC_URL/$i $(basename $i) || return 1
+done
 
-# remember start dir
-START_DIR=`pwd`
 
-# first, collect some information about the environment
-host_info
+tar xzf ebe-osg.tar.gz
 
-# grid environment set up
-if [ "x$PATH" = "x" ]; then
-    export PATH="/usr/bin:/bin"
-fi
-. $OSG_GRID/setup.sh || {
-    echo "Unable to source \$OSG_GRID/setup.sh"
-    exit 1
-}
+echo -e "run_id:  $RUN_ID\njob_id:  $JOB_ID"
 
-WORK_DIR=`pwd`
+./run-ebe `for F in ${INPUT_FILES[@]}; do basename $F; done`
 
-# is it also very important to do the cleanup in case of failure
-trap cleanup 1 2 3 6
 
-(stage_in && run_model $RUN_ID $JOB_ID && stage_out)
+cd results
+for i in *; do
+  mv $i ${JOB_ID}.${i}
+done
 
-exit $?
+dest="$DEST_URL/$RUN_ID"
+
+globus-url-copy \
+  -verbose \
+  -create-dest \
+  -parallel 4 \
+  -restart \
+  -rst-retries 5 \
+  -rst-interval 30 \
+  -rst-timeout 30 \
+  '*' $dest/ || \
+globus-url-copy \
+  -verbose \
+  -create-dest \
+  -restart \
+  -rst-retries 5 \
+  -rst-interval 30 \
+  -rst-timeout 30 \
+  -no-data-channel-authentication \
+  -no-third-party-transfers \
+  '*' $dest/ || return 1
