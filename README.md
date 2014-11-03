@@ -2,29 +2,11 @@
 
 Tools for running event-by-event (EbE) heavy-ion collision simulations on the Open Science Grid (OSG).
 
+__Important__:  Since I wrote this readme, it's become clear to me -- based on feedback from others and my own
+additional experience -- that it's rather impossible to create an OSG workflow which is compatible with
+everyone.  So while these scripts have been indispensable for me, they probably won't be useful for others --
+except perhaps as not-terrible examples.
 
-
-## Introduction
-
-### What is this, and why does it exist?
-
-I made EbE-OSG as part of a research project at Duke Physics.  It is designed to run jobs as quickly and efficiently as possible and with
-minimal user intervention.
-
-### What is it not?
-
-A comprehensive, hold-your-hand solution.
-
-### Who would want to use it?
-
-Experts who want to acquire as much CPU time as possible and are willing to put in some time to configure this.  I imagine three possible
-use cases:
-
-1. Running events using the same physics models as me.
-2. Using some of the same models, replacing some with your own.  I expect this is the most common.
-3. Completely different models, i.e. you just want my OSG scripts.
-
-I will address all three use cases below.
 
 
 ## Design
